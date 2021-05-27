@@ -13,7 +13,7 @@ app.use(
 app.get('/', (req, res) => {
   res.json({'message': 'ok'});
 })
-
+require("./app/routes/customer.routes.js")(app);
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 });
