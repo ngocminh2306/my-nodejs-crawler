@@ -46,6 +46,26 @@ EbookDetail.findById = (ebookId, result) => {
     });
 };
 
+EbookDetail.findByRangeId = (fromId, toId, result) => {
+    sql.query(`SELECT * FROM ebook_detail WHERE id >= ${fromId} && id <= ${toId}`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+
+        if (res.length) {
+            console.log("found: ", res);
+            result(null, res);
+            return;
+        }
+
+        // not found Customer with the id
+        result({ kind: "not_found" }, null);
+    });
+};
+
+
 EbookDetail.findByKeyWord = (keyword, result) => {
     sql.query(`SELECT * FROM ebook_detail WHERE slug = '${keyword}'`, (err, res) => {
         if (err) {

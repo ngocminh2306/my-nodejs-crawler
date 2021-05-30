@@ -2,6 +2,8 @@ const Crawler = require('crawler');
 const Category = require("../models/category.model.js");
 const Ebook = require("../models/ebook.model.js");
 const EbookDetail = require("../models/ebookDetail.model.js");
+const Chapter = require("../models/chapter.model.js");
+const ChapterDetail = require("../models/chapterDetail.model.js");
 
 const nettruyen = function() {
 
@@ -137,7 +139,7 @@ nettruyen.crawlerEbook = (cateId, result) =>{
                                             if (err)
                                                console.log('Error');
                                             else  
-                                            insertedObj.push(ebook);
+                                                insertedObj.push(ebook);
                                         });
                                     }
                                 })
@@ -180,7 +182,6 @@ nettruyen.crawlerEbookDetail = (fromId, toId, result) =>{
                                 let rate = Number($("#item-detail .col-info span[itemprop='ratingValue']").text());
                                 let orther_name = $('#item-detail .detail-info h2.other-name').text();
                                 let status_str = $('#item-detail .detail-info .list-info .status p.col-xs-8').text();
-                                console.log('rate: ', rate);
                                 let ebookDetail = new EbookDetail({
                                     title: title,
                                     imageUrl: imageUrl,
@@ -193,32 +194,146 @@ nettruyen.crawlerEbookDetail = (fromId, toId, result) =>{
                                     status_str: status_str,
                                     slug: element.slug
                                 })
-                                console.log(ebookDetail)
-                                EbookDetail.create(ebookDetail, (err, data) => {
-                                    if (err)
-                                       console.log('Error');
-                                    else  {
-                                        insertedObj.push(ebookDetail);
-                                        
+                                EbookDetail.findByKeyWord(element.slug, (err, data2) =>{
+                                    if(!data2 || data2.length ==0){
+                                        EbookDetail.create(ebookDetail, (err, data) => {
+                                            if (err)
+                                               console.log('Error');
+                                            else  {
+                                                insertedObj.push(ebookDetail);
+                                            }
+                                                
+                                        });
+                                    }else {
+                                        $(".list-chapter ul li:not(.heading)").each((index, el)=>{
+                                            let source, slugArray, slug, dataId;
+                                            let name, update_time_str, view , ebook_id;
+                                            $(el).find('div').each((i, e) => {
+                                                if(i ==0){
+                                                    source = $(e).find('a').attr('href');
+                                                    slugArray = source.split('/');
+                                                    slug = slugArray[slugArray.length -2];
+                                                    dataId = Number($(e).find('a').attr('data-id'));
+                                                    name = $(e).find('a').text();
+                                                }
+                                                if(i ==1){
+                                                    update_time_str = $(e).text();
+                                                }
+                                                if(i ==2) {
+                                                    view = Number($(e).text());
+                                                }
+                                            })
+                                            Chapter.findByDataId(dataId, (err, data) =>{
+                                                if (err)
+                                                    console.log(err);
+                                                else  {
+                                                    if(!data){
+                                                        let chapter = new Chapter({
+                                                            name: name,
+                                                            source: source,
+                                                            update_time_str: update_time_str,
+                                                            view: view,
+                                                            source: source,
+                                                            slug: slug,
+                                                            data_id: dataId,
+                                                            ebook_id: data2.id
+                                                        })
+                                                        Chapter.create(chapter, (err,data) =>{
+                                                            if (err)
+                                                                console.log('Error');
+                                                            else  {
+                                                                insertedObj.push(ebookDetail);
+                                                            }
+                                                        })
+                                                    }else {
+                                                        let chapter = new Chapter({
+                                                            name: name,
+                                                            source: source,
+                                                            update_time_str: update_time_str,
+                                                            view: view,
+                                                            source: source,
+                                                            slug: slug,
+                                                            data_id: dataId,
+                                                            ebook_id: data2.id
+                                                        })
+                                                        Chapter.updateById(data.id, chapter, (err,data) =>{
+                                                            if (err)
+                                                                console.log('Error');
+                                                            else  {
+                                                                insertedObj.push(ebookDetail);
+                                                            }
+                                                        })
+                                                    }
+                                                }
+                                            })
+                                        })
                                     }
-                                        
-                                });
-                                // $($('.dropdown-menu.megamenu')[0]).find( "li" ).each((i, e)=>{ 
-                                //     let description = $(e).find('a').attr('data-title')
-                                //     let url = $(e).find('a').attr('href')
-                                //     let name = $(e).find('a').attr('title')?$(e).find('a').attr('title'):$(e).find('a strong').text()
-                                //     let slug = '';
-                                //     if(url){
-                                //         slug = url.split('/').pop()
-                                //     }
-                                // })
+                                })
                             }
                             done();
                         }
-                    });
-                    // Queue just one URL, with default callback
-                    c.queue(element.source);
-                    // result(null, insertedObj);
+                });
+                // Queue just one URL, with default callback
+                c.queue(element.source);
+                // result(null, insertedObj);
+            });
+        }
+    })
+}
+
+//crawler chapter detail by find ebook fromId toId
+nettruyen.crawlerChapterDetail = (fromId, toId, result) =>{
+    let chapterDetail;
+    let insertedObj = [];
+    EbookDetail.findByRangeId(fromId, toId, (err, data) => {
+        if (err){
+            result(err, null);
+        }
+        else {
+            data.forEach(element => {
+                //fin chapter by ebook id
+                Chapter.findByEBookId(element.id , (err,chapterItem) =>{
+                    if(chapterItem){
+                        chapterItem.forEach(cItem => {
+                            const c = new Crawler({
+                            maxConnections: 10,
+                            // This will be called for each crawled page
+                            callback: 
+                            (error, res, done) => {
+                                    if (error) {
+                                        console.log(error);
+                                    } else {
+                                        const $ = res.$;
+                                        ChapterDetail.findByDataId(cItem.data_id, (err, data2) =>{
+                                            if(!data2){
+                                                let page = [];
+                                                $('.reading-detail.box_doc .page-chapter img').each((i,element) => { 
+                                                    page.push($(element).attr('src'))
+                                                });
+                                                let chapterDetail = new ChapterDetail({
+                                                    data_id: cItem.data_id,
+                                                    pages: page.toString()
+                                                })
+                                                console.log(chapterDetail)
+                                                ChapterDetail.create(chapterDetail, (err, data2) =>{
+                                                    if (err)
+                                                        console.log('Error');
+                                                    else  
+                                                        insertedObj.push(data2);
+                                                })
+                                            }else{
+                                                // update
+                                            }
+                                        })
+                                    }
+                                    done();
+                                }
+                            });
+                            // Queue just one URL, with default callback
+                            c.queue(cItem.source);
+                        })
+                    }
+                })
             });
         }
     })

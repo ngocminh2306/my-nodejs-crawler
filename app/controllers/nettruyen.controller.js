@@ -43,3 +43,20 @@ exports.crawlerEbookDetail = (req, res) => {
         })
     }
 };
+
+exports.crawlerChapterDetail = (req, res) => {
+    if(!req.query.fromId || !req.query.toId){
+        res.status(500).send({
+            message: "no query params fromId, toId."
+        });
+    }else{
+        nettruyen.crawlerChapterDetail(req.query.fromId, req.query.toId, (err, data) => {
+            if (err)
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while retrieving customers."
+                });
+            else res.send(data);
+        })
+    }
+};
