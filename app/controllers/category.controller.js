@@ -29,6 +29,10 @@ exports.create = (req, res) => {
 
 // Retrieve all Category from the database.
 exports.findAll = (req, res) => {
+    
+    download('https://www.google.com/images/srpr/logo3w.png', 'google.png', function(){
+        console.log('done');
+    });
     Category.getAll((err, data) => {
         if (err)
             res.status(500).send({
