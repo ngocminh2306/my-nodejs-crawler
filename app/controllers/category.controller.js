@@ -1,4 +1,5 @@
 const Category = require("../models/category.model.js");
+const Helper = require("../helper/helper.js");
 
 // Create and Save a new Customer
 exports.create = (req, res) => {
@@ -30,9 +31,10 @@ exports.create = (req, res) => {
 // Retrieve all Category from the database.
 exports.findAll = (req, res) => {
     
-    download('https://www.google.com/images/srpr/logo3w.png', 'google.png', function(){
+    Helper.downloadImage('https://www.google.com/images/srpr/logo3w.png', 'google.png', function(){
         console.log('done');
     });
+    return;
     Category.getAll((err, data) => {
         if (err)
             res.status(500).send({
