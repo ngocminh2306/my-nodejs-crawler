@@ -4,6 +4,7 @@ const Ebook = require("../models/ebook.model.js");
 const EbookDetail = require("../models/ebookDetail.model.js");
 const Chapter = require("../models/chapter.model.js");
 const ChapterDetail = require("../models/chapterDetail.model.js");
+const Helper = require("../helper/helper.js");
 
 const nettruyen = function() {
 
@@ -308,19 +309,25 @@ nettruyen.crawlerChapterDetail = (fromId, toId, result) =>{
                                             if(!data2){
                                                 let page = [];
                                                 $('.reading-detail.box_doc .page-chapter img').each((i,element) => { 
-                                                    page.push($(element).attr('src'))
+                                                    let src = $(element).attr('src');
+                                                    page.push('http:' + src)
                                                 });
-                                                let chapterDetail = new ChapterDetail({
-                                                    data_id: cItem.data_id,
-                                                    pages: page.toString()
+                                                let res = [];
+                                                Helper.downloadImage(page,`${cItem.data_id}`, (dir)=>{
+                                                    res.push(dir)
+                                                    let chapterDetail = new ChapterDetail({
+                                                        data_id: cItem.data_id,
+                                                        res: page.toString()
+                                                    })
+                                                    console.log(chapterDetail)
+                                                    // ChapterDetail.create(chapterDetail, (err, data2) =>{
+                                                    //     if (err)
+                                                    //         console.log('Error');
+                                                    //     else  
+                                                    //         insertedObj.push(data2);
+                                                    // })
                                                 })
-                                                console.log(chapterDetail)
-                                                ChapterDetail.create(chapterDetail, (err, data2) =>{
-                                                    if (err)
-                                                        console.log('Error');
-                                                    else  
-                                                        insertedObj.push(data2);
-                                                })
+
                                             }else{
                                                 // update
                                             }
