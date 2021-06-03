@@ -1,6 +1,6 @@
 const fs = require('fs');
 const fetch = require('node-fetch');
-const header1 = require('./header-hardcode.js');
+const header_hardcode = require('./header-hardcode.js');
 const Helper = function() {
 
 };
@@ -9,8 +9,9 @@ Helper.downloadImage = async (uris, filename, callback) => {
   let res = [];
   let i =0;
   for(let uri of uris) {
+    console.log('fetch image...')
     const response = await fetch(uri, { 
-      headers: header1
+      headers: header_hardcode.header2
       });
     const buffer = await response.buffer();
     // let uniqueId = generate(5);
@@ -23,6 +24,7 @@ Helper.downloadImage = async (uris, filename, callback) => {
     res.push(`${dir}/${filename}_${i}.jpg`);
     i++;
   }
+  console.log(res)
   callback(res)
 };
 
