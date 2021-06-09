@@ -4,6 +4,8 @@ const Ebook = require("../models/ebook.model.js");
 const EbookDetail = require("../models/ebookDetail.model.js");
 const Chapter = require("../models/chapter.model.js");
 const ChapterDetail = require("../models/chapterDetail.model.js");
+
+const TimTruyenPage = require("../nettruyen/timtruyen.page");
 const Helper = require("../helper/helper.js");
 
 const nettruyen = function() {
@@ -12,87 +14,94 @@ const nettruyen = function() {
 nettruyen.crawler = result =>{
     let category;
     let insertedObj = [];
-    const c = new Crawler({
-        maxConnections: 10,
-        // This will be called for each crawled page
-        callback: 
-        (error, res, done) => {
-            if (error) {
-                console.log(error);
-            } else {
-                const $ = res.$;
-                // $ is Cheerio by default
-                //a lean implementation of core jQuery designed specifically for the server
-                $($('.dropdown-menu.megamenu')[0]).find( "li" ).each((i, e)=>{ 
-                    let description = $(e).find('a').attr('data-title')
-                    let url = $(e).find('a').attr('href')
-                    let name = $(e).find('a').attr('title')?$(e).find('a').attr('title'):$(e).find('a strong').text()
-                    let slug = '';
-                    if(url){
-                        slug = url.split('/').pop()
-                    }
-                    let pageCount = 1;
-                        const c2 = new Crawler({
-                            maxConnections: 10,
-                            // This will be called for each crawled page
-                            callback: 
-                            (error, res, done) => {
-                                if (error) {
-                                    console.log(error);
-                                } else {
-                                    const $ = res.$;
-                                    //console.log($(".pagination li a[title='Trang cuối']"))
-                                    let el = $(".pagination li a[title='Trang cuối']").attr('href');
-                                    if(el){
+    TimTruyenPage.FindAllMegaMenu('http://www.nettruyentop.com').then(res =>{
+        result(null, {pageCount: res})
+    }).catch(err =>{
+        result(err, null)
+    })
+    // let category;
+    // let insertedObj = [];
+    // const c = new Crawler({
+    //     maxConnections: 1,
+    //     // This will be called for each crawled page
+    //     callback: 
+    //     (error, res, done) => {
+    //         if (error) {
+    //             console.log(error);
+    //         } else {
+    //             const $ = res.$;
+    //             // $ is Cheerio by default
+    //             //a lean implementation of core jQuery designed specifically for the server
+    //             $($('.dropdown-menu.megamenu')[0]).find( "li" ).each((i, e)=>{ 
+    //                 let description = $(e).find('a').attr('data-title')
+    //                 let url = $(e).find('a').attr('href')
+    //                 let name = $(e).find('a').attr('title')?$(e).find('a').attr('title'):$(e).find('a strong').text()
+    //                 let slug = '';
+    //                 if(url){
+    //                     slug = url.split('/').pop()
+    //                 }
+    //                 let pageCount = 1;
+    //                     const c2 = new Crawler({
+    //                         maxConnections: 1,
+    //                         // This will be called for each crawled page
+    //                         callback: 
+    //                         (error, res, done) => {
+    //                             if (error) {
+    //                                 console.log(error);
+    //                             } else {
+    //                                 const $ = res.$;
+    //                                 //console.log($(".pagination li a[title='Trang cuối']"))
+    //                                 let el = $(".pagination li a[title='Trang cuối']").attr('href');
+    //                                 if(el){
                                         
-                                        if(el.split('=')){
-                                            pageCount = Number(el.split('=').pop())
-                                        }else{
-                                            pageCount = 1;
-                                        }
-                                    }
-                                    Category.findBySlug(slug, (err, data) => {
-                                        category = new Category({
-                                            name: name,
-                                            slug: slug,
-                                            description: description,
-                                            source: url,
-                                            pageCount: pageCount
-                                        });
-                                        if(!data || data.length ==0) {
+    //                                     if(el.split('=')){
+    //                                         pageCount = Number(el.split('=').pop())
+    //                                     }else{
+    //                                         pageCount = 1;
+    //                                     }
+    //                                 }
+    //                                 Category.findBySlug(slug, (err, data) => {
+    //                                     category = new Category({
+    //                                         name: name,
+    //                                         slug: slug,
+    //                                         description: description,
+    //                                         source: url,
+    //                                         pageCount: pageCount
+    //                                     });
+    //                                     if(!data || data.length ==0) {
                 
-                                            Category.create(category, (err, data) => {
-                                                if (err)
-                                                   console.log('Error');
-                                                else  
-                                                insertedObj.push(category);
-                                            });
-                                        }else{
-                                            if(pageCount != 0 && data.pageCount != pageCount){
-                                                Category.updateById(data.id, category, (err, data) =>{
-                                                    if (err)
-                                                    console.log('Error');
-                                                 else  
-                                                    insertedObj.push(category);
-                                                })
-                                            }
-                                        }
-                                    })
+    //                                         Category.create(category, (err, data) => {
+    //                                             if (err)
+    //                                                console.log('Error');
+    //                                             else  
+    //                                             insertedObj.push(category);
+    //                                         });
+    //                                     }else{
+    //                                         if(pageCount != 0 && data.pageCount != pageCount){
+    //                                             Category.updateById(data.id, category, (err, data) =>{
+    //                                                 if (err)
+    //                                                 console.log('Error');
+    //                                              else  
+    //                                                 insertedObj.push(category);
+    //                                             })
+    //                                         }
+    //                                     }
+    //                                 })
                                     
-                                }
-                                done();
-                            }
-                        });
-                        // Queue just one URL, with default callback
-                        c2.queue(url);
-                })
-                result(null, insertedObj);
-            }
-            done();
-        }
-    });
-    // Queue just one URL, with default callback
-    c.queue('http://www.nettruyentop.com/');
+    //                             }
+    //                             done();
+    //                         }
+    //                     });
+    //                     // Queue just one URL, with default callback
+    //                     c2.queue(url);
+    //             })
+    //             result(null, insertedObj);
+    //         }
+    //         done();
+    //     }
+    // });
+    // // Queue just one URL, with default callback
+    // c.queue('http://www.nettruyentop.com/');
     
 }
 nettruyen.crawlerEbook = (cateId, result) =>{
@@ -312,24 +321,49 @@ nettruyen.crawlerChapterDetail = (fromId, toId, result) =>{
                                                     let src = $(element).attr('src');
                                                     page.push('http:' + src)
                                                 });
-                                                let res = [];
-                                                Helper.downloadImage(page,`${cItem.data_id}`, (dir)=>{
-                                                    res.push(dir)
-                                                    let chapterDetail = new ChapterDetail({
-                                                        data_id: cItem.data_id,
-                                                        res: page.toString()
-                                                    })
-                                                    console.log(chapterDetail)
-                                                    // ChapterDetail.create(chapterDetail, (err, data2) =>{
-                                                    //     if (err)
-                                                    //         console.log('Error');
-                                                    //     else  
-                                                    //         insertedObj.push(data2);
-                                                    // })
+                                                let chapterDetail = new ChapterDetail({
+                                                            data_id: cItem.data_id,
+                                                            pages: page.toString()
                                                 })
+                                                ChapterDetail.create(chapterDetail, (err, data2) =>{
+                                                    if (err)
+                                                        console.log('Error');
+                                                    else  
+                                                        insertedObj.push(data2);
+                                                })
+                                                let res = [];
+                                                // Helper.downloadImage(page,`${cItem.data_id}`, (dir)=>{
+                                                //     res.push(dir)
+                                                //     let chapterDetail = new ChapterDetail({
+                                                //         data_id: cItem.data_id,
+                                                //         pages: res.toString()
+                                                //     })
+                                                //     ChapterDetail.create(chapterDetail, (err, data2) =>{
+                                                //         if (err)
+                                                //             console.log('Error');
+                                                //         else  
+                                                //             insertedObj.push(data2);
+                                                //     })
+                                                // })
 
                                             }else{
                                                 // update
+                                                let page = [];
+                                                $('.reading-detail.box_doc .page-chapter img').each((i,element) => { 
+                                                    let src = $(element).attr('src');
+                                                    page.push('http:' + src)
+                                                });
+                                                let res = [];
+                                                let chapterDetail = new ChapterDetail({
+                                                    data_id: cItem.data_id,
+                                                    pages: page.toString()
+                                                })
+                                                ChapterDetail.create(chapterDetail, (err, data2) =>{
+                                                    if (err)
+                                                        console.log('Error');
+                                                    else  
+                                                        insertedObj.push(data2);
+                                                })
                                             }
                                         })
                                     }
@@ -342,6 +376,7 @@ nettruyen.crawlerChapterDetail = (fromId, toId, result) =>{
                     }
                 })
             });
+            result(null, insertedObj);
         }
     })
 }

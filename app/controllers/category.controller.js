@@ -30,11 +30,6 @@ exports.create = (req, res) => {
 
 // Retrieve all Category from the database.
 exports.findAll = (req, res) => {
-    
-    // Helper.downloadImage(['http://vipanh.com/data/images/30069/687349/001.jpg?data=net'], 'google.jpg', function(){
-    //     console.log('done');
-    // });
-    return;
     Category.getAll((err, data) => {
         if (err)
             res.status(500).send({

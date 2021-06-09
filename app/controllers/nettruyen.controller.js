@@ -7,7 +7,10 @@ exports.crawler = (req, res) => {
                 message:
                     err.message || "Some error occurred while retrieving customers."
             });
-        else res.send(data);
+        else {
+            console.log('err: ', err)
+            res.send(data);
+        }
     })
 };
 
