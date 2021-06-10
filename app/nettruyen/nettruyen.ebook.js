@@ -1,6 +1,6 @@
-const CommonCrawler = require('./common.crawler');
-const EbookDetail = require("../models/ebookDetail.model.js");
+const CommonCrawler = require('../helper/common.crawler');
 const Chapter = require("../models/chapter.model.js");
+const Ebook = require("../models/ebook.model");
 const NetTruyenChapter = require("../nettruyen/nettruyen.chapter");
 const NetTruyenEbook = function () { };
 
@@ -13,6 +13,9 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
             let content = $('#item-detail .detail-content p').text();
             let author = $('#item-detail .detail-info .author a').text();
             let cates = $('#item-detail .detail-info .list-info .kind .col-xs-8').text();
+            let slugEbookArray = ebook_source_url.split('/');
+            let ebookSlug =  slugEbookArray[slugEbookArray.length - 1];
+            
             let view = 0
             $('#item-detail .detail-info .list-info .row .col-xs-8').each((i, e) => {
                 if (i == 4) {
@@ -22,7 +25,7 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
             let rate = Number($("#item-detail .col-info span[itemprop='ratingValue']").text());
             let orther_name = $('#item-detail .detail-info h2.other-name').text();
             let status_str = $('#item-detail .detail-info .list-info .status p.col-xs-8').text();
-            let ebookDetail = new EbookDetail({
+            let Ebooks = new Ebook({
                 title: title,
                 imageUrl: imageUrl,
                 content: content,
@@ -32,7 +35,7 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
                 view: view,
                 rate: rate,
                 status_str: status_str,
-                slug: ''
+                slug: ebookSlug
             })
             let lstChapter = [];
             $(".list-chapter ul li:not(.heading)").each((index, el) => {
@@ -71,14 +74,14 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
                     }).catch(err => reject1(err));
                 })
             })
-
             Promise.all(promises).then(data =>{
                 data.map((v,i) => {
-                    lstChapter[i].pages = v.toString();            
+                    let index = lstChapter.findIndex(x=>x.source == v.source);
+                    lstChapter[index].pages = v.pages.toString();            
                 })
-                ebookDetail.chapters = lstChapter;
-                // console.log(ebookDetail)
-                resovleAll(ebookDetail)
+                Ebooks.chapters = lstChapter;
+                //Insert ebook
+                resovleAll(Ebooks)
             }).catch(err => reject(err))
 
         }).catch(err => reject(err));

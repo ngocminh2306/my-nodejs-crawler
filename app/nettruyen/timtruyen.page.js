@@ -1,6 +1,6 @@
 const { data } = require("cheerio/lib/api/attributes");
 const Category = require("../models/category.model.js");
-const CommonCrawler = require('./common.crawler');
+const CommonCrawler = require('../helper/common.crawler');
 const TimTruyenPage = function () { };
 TimTruyenPage.FindAllMegaMenu = (url) => {
     return new Promise((resolveAll, rejectAll) => {

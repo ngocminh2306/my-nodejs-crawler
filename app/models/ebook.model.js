@@ -3,13 +3,16 @@ const sql = require("./db.js");
 // constructor
 const Ebook = function (ebook) {
     this.title = ebook.title;
-    this.alt = ebook.alt;
-    this.source = ebook.source;
     this.imageUrl = ebook.imageUrl;
-    this.originImageUrl = ebook.originImageUrl;
+    this.content = ebook.content;
+    this.author = ebook.author;
+    this.cates = ebook.cates;
     this.view = ebook.view;
+    this.rate = ebook.rate;
     this.slug = ebook.slug;
-    this.page = ebook.page;
+    this.orther_name = ebook.orther_name;
+    this.status_str = ebook.status_str;
+    this.chapters = ebook.chapters? ebookDetail.chapters: [];
 };
 
 Ebook.create = (newEbook, result) => {

@@ -1,7 +1,6 @@
 const Crawler = require('crawler');
 const Category = require("../models/category.model.js");
 const Ebook = require("../models/ebook.model.js");
-const EbookDetail = require("../models/ebookDetail.model.js");
 const Chapter = require("../models/chapter.model.js");
 const ChapterDetail = require("../models/chapterDetail.model.js");
 
@@ -21,10 +20,8 @@ nettruyen.crawlerCategory = result => {
 }
 nettruyen.crawler_ebook_by_source = (ebook_source, result) => {
     NetTruyenEbook.CrawlerEbook(ebook_source).then(data => {
-        // console.log('DATAAA: ',data)
         result(null, data);
     }).catch(err => {
-        console.log("CO loi xay ra:::")
         result(err, null)
     })
 }

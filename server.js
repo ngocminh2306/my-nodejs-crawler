@@ -21,7 +21,6 @@ app.get('/', (req, res) => {
 require("./app/routes/customer.routes.js")(app);
 require("./app/routes/category.routes.js")(app);
 // require("./app/routes/ebook.routes.js")(app);
-require("./app/routes/ebookDetail.routes.js")(app);
 require("./app/routes/nettruyen.routes.js")(app);
 app.listen(port, () => {
   console.log(`my crawler app listening at http://localhost:${port}`)
