@@ -12,9 +12,9 @@ const Helper = require("../helper/helper.js");
 const nettruyen = function () {
 
 };
-nettruyen.crawler = result => {
+nettruyen.crawlerCategory = result => {
     TimTruyenPage.FindAllMegaMenu('http://www.nettruyentop.com').then(res => {
-        result(null, { pageCount: res })
+        result(null, res)
     }).catch(err => {
         result(err, null)
     })

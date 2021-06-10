@@ -1,0 +1,34 @@
+<div class="controll-panel">
+    <div class="item-panel">
+        <button (click)="crawlerCategory()" [disabled]="loading">Crawler</button>
+    </div>
+    <div *ngIf="loading" class="loading">Loading ...</div>
+</div>
+<div class="content">
+    <div class="view-port">
+        <div class="left-area">
+            <ol>
+                <p>Crawler</p>
+                <li *ngFor="let item of crawlerCategories">
+                    <strong>{{ item.name }}</strong> 
+                    <span *ngIf="item.pageCount"> | {{ item.pageCount}}</span>
+                    <span *ngIf="item.updatedTime"> | {{ item.updatedTime}}</span>
+                    <span *ngIf="item.crawler_status"> | {{ item.crawler_status}}</span>
+                </li>
+            </ol>
+        </div>
+        <div class="right-area">
+            <ol>
+                <p>Local</p>
+                <li *ngFor="let item of Categories">
+                    <strong>{{ item.name }}</strong>
+                    <span *ngIf="item.pageCount"> | {{ item.pageCount}}</span>
+                    <span *ngIf="item.updatedTime"> | {{ item.updatedTime}}</span>
+                    <span *ngIf="item.crawler_status"> | {{ item.crawler_status}}</span>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+

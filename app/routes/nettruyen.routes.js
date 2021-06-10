@@ -2,7 +2,7 @@
 module.exports = app => {
     const nettruyen = require("../controllers/nettruyen.controller.js");
 
-    app.get("/crawler", nettruyen.crawler);
+    app.get("/crawler-category", nettruyen.crawlerCategory);
     
     app.get("/crawler-ebooks", nettruyen.crawlerEbook);
 

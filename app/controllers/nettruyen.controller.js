@@ -1,7 +1,7 @@
 const nettruyen = require("../services/nettruyen.crawler.service.js");
 
-exports.crawler = (req, res) => {
-    nettruyen.crawler((err, data) => {
+exports.crawlerCategory = (req, res) => {
+    nettruyen.crawlerCategory((err, data) => {
         if (err) {
             console.log('my err: ',err);
             res.status(500).send({

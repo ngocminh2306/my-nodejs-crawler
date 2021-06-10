@@ -18,9 +18,7 @@ Category.create = (newCategory, result) => {
             result(err, null);
             return;
         }
-
-        console.log("created categories: ", { id: res.insertId, ...newCategory });
-        result(null, { id: res.insertId, ...newCategory });
+        result(null, { id: res.insertId, ...newCategory, crawler_status: 'Create'  });
     });
 };
 
@@ -81,19 +79,16 @@ Category.updateById = (id, category, result) => {
         [category.name, category.slug, category.description, category.source, category.pageCount, id],
         (err, res) => {
             if (err) {
-                console.log("error: ", err);
                 result(null, err);
                 return;
             }
 
             if (res.affectedRows == 0) {
-                // not found Customer with the id
                 result({ kind: "not_found" }, null);
                 return;
             }
-
-            // console.log("updated category: ", { id: id, ...category });
-            result(null, { id: id, ...category });
+            category.id = id;
+            result(null, { ...category, crawler_status: 'Update' });
         }
     );
 };
@@ -138,20 +133,20 @@ Category.CreateOrUpdate = (newCategory) => {
             } else {
                 if (data) {
                     //Update
-                    Category.updateById(data.id, newCategory, (err, data) => {
+                    Category.updateById(data.id, newCategory, (err, data1) => {
                         if (err)
                             reject(err)
                         else {
-                            resolve(data)
+                            resolve(data1)
                         }
                     })
                 } else {
                     //Insert
-                    Category.create(newCategory, (err, data) => {
+                    Category.create(newCategory, (err, data1) => {
                         if (err)
                             reject(err)
                         else {
-                            resolve(data)
+                            resolve(data1)
                         }
                     })
                 }
