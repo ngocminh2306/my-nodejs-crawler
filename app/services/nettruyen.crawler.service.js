@@ -21,9 +21,12 @@ nettruyen.crawlerCategory = result => {
 }
 nettruyen.crawler_ebook_by_source = (ebook_source, result) => {
     NetTruyenEbook.CrawlerEbook(ebook_source).then(data => {
-        console.log('DATAAA: ',data)
+        // console.log('DATAAA: ',data)
         result(null, data);
-    }).catch(err => result(err, null))
+    }).catch(err => {
+        console.log("CO loi xay ra:::")
+        result(err, null)
+    })
 }
 nettruyen.crawlerEbook = (cateId, result) => {
     Category.findById(cateId, (err, data) => {

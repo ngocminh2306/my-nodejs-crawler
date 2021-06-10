@@ -81,7 +81,7 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
                 resovleAll(ebookDetail)
             }).catch(err => reject(err))
 
-        }).then(err => reject(err));
+        }).catch(err => reject(err));
     })
 }
 module.exports = NetTruyenEbook;
