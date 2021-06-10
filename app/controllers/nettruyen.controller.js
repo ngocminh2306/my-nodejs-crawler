@@ -2,13 +2,14 @@ const nettruyen = require("../services/nettruyen.crawler.service.js");
 
 exports.crawler = (req, res) => {
     nettruyen.crawler((err, data) => {
-        if (err)
+        if (err) {
+            console.log('my err: ',err);
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while retrieving customers."
+                    err.message || "Some error occurred while retrieving crawler."
             });
+        }
         else {
-            console.log('err: ', err)
             res.send(data);
         }
     })

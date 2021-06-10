@@ -8,6 +8,7 @@ const Category = function (category) {
     this.description = category.description;
     this.source = category.source;
     this.pageCount = category.pageCount;
+    this.createdTime = Date.now();
 };
 
 Category.create = (newCategory, result) => {
@@ -57,7 +58,7 @@ Category.findBySlug = (categorySlug, result) => {
         }
 
         // not found Customer with the id
-        result({ kind: "not_found" }, null);
+        result(null, null);
     });
 };
 
@@ -76,7 +77,7 @@ Category.getAll = result => {
 
 Category.updateById = (id, category, result) => {
     sql.query(
-        "UPDATE categories SET name = ?, slug = ?, description = ?, source = ?, pageCount = ?   WHERE id = ?",
+        "UPDATE categories SET name = ?, slug = ?, description = ?, source = ?, pageCount = ?, updatedTime = now()   WHERE id = ?",
         [category.name, category.slug, category.description, category.source, category.pageCount, id],
         (err, res) => {
             if (err) {
@@ -91,7 +92,7 @@ Category.updateById = (id, category, result) => {
                 return;
             }
 
-            console.log("updated category: ", { id: id, ...category });
+            // console.log("updated category: ", { id: id, ...category });
             result(null, { id: id, ...category });
         }
     );
@@ -128,5 +129,35 @@ Category.removeAll = result => {
         result(null, res);
     });
 };
+
+Category.CreateOrUpdate = (newCategory) => {
+    return new Promise((resolve, reject) => {
+        Category.findBySlug(newCategory.slug, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (data) {
+                    //Update
+                    Category.updateById(data.id, newCategory, (err, data) => {
+                        if (err)
+                            reject(err)
+                        else {
+                            resolve(data)
+                        }
+                    })
+                } else {
+                    //Insert
+                    Category.create(newCategory, (err, data) => {
+                        if (err)
+                            reject(err)
+                        else {
+                            resolve(data)
+                        }
+                    })
+                }
+            }
+        })
+    })
+}
 
 module.exports = Category;

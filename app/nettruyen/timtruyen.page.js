@@ -1,14 +1,11 @@
+const { data } = require("cheerio/lib/api/attributes");
 const Category = require("../models/category.model.js");
 const NetTruyenHome = require('./common.crawler');
-const TimTruyenPage = function () {
-
-};
+const TimTruyenPage = function () { };
 TimTruyenPage.FindAllMegaMenu = (url) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolveAll, rejectAll) => {
         NetTruyenHome.LoadPage(url).then(res => {
             const $ = res;
-            // $ is Cheerio by default
-            //a lean implementation of core jQuery designed specifically for the server
             let lstCategory = [];
             $($('.dropdown-menu.megamenu')[0]).find("li").each((i, e) => {
                 let description = $(e).find('a').attr('data-title')
@@ -29,12 +26,12 @@ TimTruyenPage.FindAllMegaMenu = (url) => {
             })
             let promises = lstCategory.map(category => {
                 return new Promise((resolve1, reject1) => {
-                    TimTruyenPage.FindPageCount(url).then(pageCount => {
+                    TimTruyenPage.FindPageCount(category.source).then(pageCount => {
                         let newCategory = new Category({
                             name: category.name,
                             slug: category.slug,
                             description: category.description,
-                            source: category.url,
+                            source: category.source,
                             pageCount: pageCount
                         })
                         resolve1(newCategory)
@@ -43,15 +40,25 @@ TimTruyenPage.FindAllMegaMenu = (url) => {
             });
 
             Promise.all(promises).then((values) => {
-                console.log(values)
-                resolve(values)
+                let promises = values.map(value => {
+                    return new Promise((resolve2, reject2) => {
+                        Category.CreateOrUpdate(value).then(data => {
+                            resolve2(data);
+                        }).catch(err => { reject2(err) })
+                    })
+                })
+                Promise.all(promises).then(datas => {
+                    resolveAll(datas)
+                }).catch(err => {
+                    rejectAll(err)
+                });
+
             }).catch(err => {
-                console.log(err)
                 reject(err)
             });
         }).catch(error => {
-            reject(error)
-        })
+            rejectAll(error)
+        });
     })
 }
 /**
@@ -75,11 +82,5 @@ TimTruyenPage.FindPageCount = (url) => {
             reject(error)
         })
     })
-}
-function mapObjectToArray(obj, cb) {
-    var res = [];
-    for (var key in obj)
-        res.push(cb(obj[key], key));
-    return res;
 }
 module.exports = TimTruyenPage;
