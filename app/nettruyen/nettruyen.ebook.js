@@ -1,13 +1,13 @@
 const CommonCrawler = require('./common.crawler');
 const EbookDetail = require("../models/ebookDetail.model.js");
 const Chapter = require("../models/chapter.model.js");
+const NetTruyenChapter = require("../nettruyen/nettruyen.chapter");
 const NetTruyenEbook = function () { };
 
 NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
-    return new Promise((resovle, reject) => {
+    return new Promise((resovleAll, reject) => {
         CommonCrawler.LoadPage(ebook_source_url).then(res => {
             let $ = res;
-            let lstEbook = [];
             let title = $('#item-detail .title-detail').text();
             let imageUrl = $('#item-detail .detail-info img').attr('src');
             let content = $('#item-detail .detail-content p').text();
@@ -15,11 +15,10 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
             let cates = $('#item-detail .detail-info .list-info .kind .col-xs-8').text();
             let view = 0
             $('#item-detail .detail-info .list-info .row .col-xs-8').each((i, e) => {
-                if(i == 4){
+                if (i == 4) {
                     view = $(e).text();
                 }
             })
-            
             let rate = Number($("#item-detail .col-info span[itemprop='ratingValue']").text());
             let orther_name = $('#item-detail .detail-info h2.other-name').text();
             let status_str = $('#item-detail .detail-info .list-info .status p.col-xs-8').text();
@@ -65,10 +64,24 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
                 })
                 lstChapter.push(chapter);
             })
-            ebookDetail.chapters = lstChapter;
-            resovle(ebookDetail)
+            let promises = lstChapter.map(v => {
+                return new Promise((resovle1, reject1) => {
+                    NetTruyenChapter.CrawlerChapter(v.source).then(res => {
+                        resovle1(res)
+                    }).catch(err => reject1(err));
+                })
+            })
+
+            Promise.all(promises).then(data =>{
+                data.map((v,i) => {
+                    lstChapter[i].pages = v.toString();            
+                })
+                ebookDetail.chapters = lstChapter;
+                // console.log(ebookDetail)
+                resovleAll(ebookDetail)
+            }).catch(err => reject(err))
+
         }).then(err => reject(err));
     })
 }
-
 module.exports = NetTruyenEbook;

@@ -37,4 +37,7 @@ export class CrawlerComponent implements OnInit {
       this.loading = false;
     })
   }
+  openTab(event: any) {
+    console.log(event)
+  }
 }

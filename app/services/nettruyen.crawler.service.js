@@ -21,6 +21,7 @@ nettruyen.crawlerCategory = result => {
 }
 nettruyen.crawler_ebook_by_source = (ebook_source, result) => {
     NetTruyenEbook.CrawlerEbook(ebook_source).then(data => {
+        console.log('DATAAA: ',data)
         result(null, data);
     }).catch(err => result(err, null))
 }

@@ -10,6 +10,7 @@ const Chapter = function (chapter) {
     this.slug = chapter.slug;
     this.data_id = chapter.data_id;
     this.ebook_id = chapter.ebook_id;
+    this.pages = chapter.pages;
 };
 
 Chapter.create = (newChapter, result) => {
