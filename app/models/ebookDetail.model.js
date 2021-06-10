@@ -12,6 +12,7 @@ const EbookDetail = function (ebookDetail) {
     this.slug = ebookDetail.slug;
     this.orther_name = ebookDetail.orther_name;
     this.status_str = ebookDetail.status_str;
+    this.chapters = ebookDetail.chapters? ebookDetail.chapters: [];
 };
 
 EbookDetail.create = (newEbook, result) => {

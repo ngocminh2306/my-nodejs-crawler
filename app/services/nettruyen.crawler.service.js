@@ -6,6 +6,7 @@ const Chapter = require("../models/chapter.model.js");
 const ChapterDetail = require("../models/chapterDetail.model.js");
 
 const TimTruyenPage = require("../nettruyen/timtruyen.page");
+const NetTruyenEbook = require("../nettruyen/nettruyen.ebook");
 const Helper = require("../helper/helper.js");
 
 const nettruyen = function () {
@@ -17,6 +18,11 @@ nettruyen.crawler = result => {
     }).catch(err => {
         result(err, null)
     })
+}
+nettruyen.crawler_ebook_by_source = (ebook_source, result) => {
+    NetTruyenEbook.CrawlerEbook(ebook_source).then(data => {
+        result(null, data);
+    }).catch(err => result(err, null))
 }
 nettruyen.crawlerEbook = (cateId, result) => {
     Category.findById(cateId, (err, data) => {

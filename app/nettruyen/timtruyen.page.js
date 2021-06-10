@@ -1,10 +1,10 @@
 const { data } = require("cheerio/lib/api/attributes");
 const Category = require("../models/category.model.js");
-const NetTruyenHome = require('./common.crawler');
+const CommonCrawler = require('./common.crawler');
 const TimTruyenPage = function () { };
 TimTruyenPage.FindAllMegaMenu = (url) => {
     return new Promise((resolveAll, rejectAll) => {
-        NetTruyenHome.LoadPage(url).then(res => {
+        CommonCrawler.LoadPage(url).then(res => {
             const $ = res;
             let lstCategory = [];
             $($('.dropdown-menu.megamenu')[0]).find("li").each((i, e) => {
@@ -66,7 +66,7 @@ TimTruyenPage.FindAllMegaMenu = (url) => {
  */
 TimTruyenPage.FindPageCount = (url) => {
     return new Promise((resolve, reject) => {
-        NetTruyenHome.LoadPage(url).then(res => {
+        CommonCrawler.LoadPage(url).then(res => {
             const $ = res;
             let pageCount = 0;
             let el = $(".pagination li a[title='Trang cuối']").attr('href');

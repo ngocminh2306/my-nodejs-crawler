@@ -1,11 +1,11 @@
 const Crawler = require('crawler');
-const NetTruyenHome = function() {
+const CommonCrawler = function() {
 
 };
 /**
  * Load 1 trang và trả vè html $ trang đó
  */
- NetTruyenHome.LoadPage = (url)=>{
+CommonCrawler.LoadPage = (url)=>{
     return new Promise((resolve, reject) =>{
         const c2 = new Crawler({
             maxConnections: 10,
@@ -27,4 +27,4 @@ const NetTruyenHome = function() {
     })
 }
 
-module.exports = NetTruyenHome;
+module.exports = CommonCrawler;

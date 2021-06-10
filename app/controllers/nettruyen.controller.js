@@ -15,6 +15,17 @@ exports.crawler = (req, res) => {
     })
 };
 
+exports.crawlerEbookBySource = (req, res) => {
+    nettruyen.crawler_ebook_by_source('http://www.nettruyentop.com/truyen-tranh/cau-lac-bo-nhung-ke-mat-ngu-30721', (err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        else res.send(data);
+    })
+};
+
 exports.crawlerEbook = (req, res) => {
     if(!req.query.cateId){
         res.status(500).send({

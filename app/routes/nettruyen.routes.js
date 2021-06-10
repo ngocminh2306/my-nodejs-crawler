@@ -9,4 +9,6 @@ module.exports = app => {
     app.get("/crawler-ebooks-detail", nettruyen.crawlerEbookDetail);
 
     app.get("/crawler-chapter-detail", nettruyen.crawlerChapterDetail);
+
+    app.get("/crawler-ebooks-by-source", nettruyen.crawlerEbookBySource)
 };
