@@ -12,7 +12,7 @@ const Category = function (category) {
 };
 
 Category.create = (newCategory, result) => {
-    sql.query("INSERT INTO Categories SET ?, CreationTime = now()", newCategory, (err, res) => {
+    sql.query("INSERT INTO EbookCategory SET ?, CreationTime = now(), IsDeleted = false", newCategory, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -23,7 +23,7 @@ Category.create = (newCategory, result) => {
 };
 
 Category.findById = (categoryId, result) => {
-    sql.query(`SELECT * FROM Categories WHERE Id = ${categoryId}`, (err, res) => {
+    sql.query(`SELECT * FROM EbookCategory WHERE Id = ${categoryId}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -42,7 +42,7 @@ Category.findById = (categoryId, result) => {
 };
 
 Category.findBySlug = (categorySlug, result) => {
-    sql.query(`SELECT * FROM Categories WHERE Slug = '${categorySlug}'`, (err, res) => {
+    sql.query(`SELECT * FROM EbookCategory WHERE Slug = '${categorySlug}'`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -61,7 +61,7 @@ Category.findBySlug = (categorySlug, result) => {
 };
 
 Category.getAll = result => {
-    sql.query("SELECT * FROM Categories", (err, res) => {
+    sql.query("SELECT * FROM EbookCategory", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -75,7 +75,7 @@ Category.getAll = result => {
 
 Category.updateById = (Id, category, result) => {
     sql.query(
-        "UPDATE Categories SET Name = ?, Slug = ?, Description = ?, Source = ?, PageCount = ?, CrawlerDate = now()   WHERE Id = ?",
+        "UPDATE EbookCategory SET Name = ?, Slug = ?, Description = ?, Source = ?, PageCount = ?, CrawlerDate = now(), LastModificationTime = now()   WHERE Id = ?",
         [category.Name, category.Slug, category.Description, category.Source, category.PageCount, Id],
         (err, res) => {
             if (err) {
@@ -84,7 +84,7 @@ Category.updateById = (Id, category, result) => {
             }
 
             if (res.affectedRows == 0) {
-                result({ kind: "not_found" }, null);
+                result(null, null);
                 return;
             }
             category.Id = Id;
