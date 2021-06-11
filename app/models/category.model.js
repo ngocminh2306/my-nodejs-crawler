@@ -2,28 +2,27 @@ const sql = require("./db.js");
 
 // constructor
 const Category = function (category) {
-    this.id = category.id;
-    this.name = category.name;
-    this.slug = category.slug;
-    this.description = category.description;
-    this.source = category.source;
-    this.pageCount = category.pageCount;
-    this.createdTime = Date.now();
+    this.Id = category.id;
+    this.Name = category.name;
+    this.Slug = category.slug;
+    this.Description = category.description;
+    this.Source = category.source;
+    this.PageCount = category.pageCount;
 };
 
 Category.create = (newCategory, result) => {
-    sql.query("INSERT INTO categories SET ?", newCategory, (err, res) => {
+    sql.query("INSERT INTO Categories SET ?, CreationTime = now()", newCategory, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
             return;
         }
-        result(null, { id: res.insertId, ...newCategory, crawler_status: 'Create'  });
+        result(null, { Id: res.insertId, ...newCategory, CrawlerStatus: 'Create'  });
     });
 };
 
 Category.findById = (categoryId, result) => {
-    sql.query(`SELECT * FROM categories WHERE id = ${categoryId}`, (err, res) => {
+    sql.query(`SELECT * FROM Categories WHERE Id = ${categoryId}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -42,7 +41,7 @@ Category.findById = (categoryId, result) => {
 };
 
 Category.findBySlug = (categorySlug, result) => {
-    sql.query(`SELECT * FROM categories WHERE slug = '${categorySlug}'`, (err, res) => {
+    sql.query(`SELECT * FROM Categories WHERE Slug = '${categorySlug}'`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -61,7 +60,7 @@ Category.findBySlug = (categorySlug, result) => {
 };
 
 Category.getAll = result => {
-    sql.query("SELECT * FROM categories", (err, res) => {
+    sql.query("SELECT * FROM Categories", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -73,10 +72,10 @@ Category.getAll = result => {
     });
 };
 
-Category.updateById = (id, category, result) => {
+Category.updateById = (Id, category, result) => {
     sql.query(
-        "UPDATE categories SET name = ?, slug = ?, description = ?, source = ?, pageCount = ?, updatedTime = now()   WHERE id = ?",
-        [category.name, category.slug, category.description, category.source, category.pageCount, id],
+        "UPDATE Categories SET Name = ?, Slug = ?, Description = ?, Source = ?, PageCount = ?, CrawlerDate = now()   WHERE Id = ?",
+        [category.Name, category.Slug, category.Description, category.Source, category.PageCount, Id],
         (err, res) => {
             if (err) {
                 result(null, err);
@@ -87,53 +86,21 @@ Category.updateById = (id, category, result) => {
                 result({ kind: "not_found" }, null);
                 return;
             }
-            category.id = id;
-            result(null, { ...category, crawler_status: 'Update' });
+            category.Id = Id;
+            result(null, { ...category, CrawlerStatus: 'Update' });
         }
     );
 };
 
-Category.remove = (id, result) => {
-    sql.query("DELETE FROM categories WHERE id = ?", id, (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(null, err);
-            return;
-        }
-
-        if (res.affectedRows == 0) {
-            // not found Customer with the id
-            result({ kind: "not_found" }, null);
-            return;
-        }
-
-        console.log("deleted categories with id: ", id);
-        result(null, res);
-    });
-};
-
-Category.removeAll = result => {
-    sql.query("DELETE FROM categories", (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(null, err);
-            return;
-        }
-
-        console.log(`deleted ${res.affectedRows} categories`);
-        result(null, res);
-    });
-};
-
 Category.CreateOrUpdate = (newCategory) => {
     return new Promise((resolve, reject) => {
-        Category.findBySlug(newCategory.slug, (err, data) => {
+        Category.findBySlug(newCategory.Slug, (err, data) => {
             if (err) {
                 reject(err);
             } else {
                 if (data) {
                     //Update
-                    Category.updateById(data.id, newCategory, (err, data1) => {
+                    Category.updateById(data.Id, newCategory, (err, data1) => {
                         if (err)
                             reject(err)
                         else {

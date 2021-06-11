@@ -4,6 +4,18 @@ const Ebook = require("../models/ebook.model");
 const NetTruyenChapter = require("../nettruyen/nettruyen.chapter");
 const NetTruyenEbook = function () { };
 
+NetTruyenEbook.CrawlerListEbook = (url) =>{
+    return new Promise((resovleAll, reject) => {
+        CommonCrawler.LoadPage(ebook_source_url).then(res => {
+            const $ = res.$;
+            $('.ModuleContent .items .row .item').each((i, e) => {
+                let source = $(e).find('.jtip').attr('href');
+                let name = $(e).find('.jtip').text();
+                let slug = $(e).find('.jtip').attr('href').split('/').pop();
+            })
+        }).catch(err => reject(err));
+    })
+}
 NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
     return new Promise((resovleAll, reject) => {
         CommonCrawler.LoadPage(ebook_source_url).then(res => {

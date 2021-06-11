@@ -7,31 +7,33 @@ TimTruyenPage.FindAllMegaMenu = (url) => {
         CommonCrawler.LoadPage(url).then(res => {
             const $ = res;
             let lstCategory = [];
-            $($('.dropdown-menu.megamenu')[0]).find("li").each((i, e) => {
-                let description = $(e).find('a').attr('data-title')
-                let url = $(e).find('a').attr('href')
-                let name = $(e).find('a').attr('title') ? $(e).find('a').attr('title') : $(e).find('a strong').text()
-                let slug = '';
-                if (url) {
-                    slug = url.split('/').pop()
+            $($('.dropdown-menu.megamenu')[0]).find("ul li").each((i, e) => {
+                if(i > 1) {
+                    let description = $(e).find('a').attr('data-title')
+                    let url = $(e).find('a').attr('href')
+                    let name = $(e).find('a').attr('title') ? $(e).find('a').attr('title') : $(e).find('a strong').text()
+                    let slug = '';
+                    if (url) {
+                        slug = url.split('/').pop()
+                    }
+                    let category = new Category({
+                        name: name,
+                        slug: slug,
+                        description: description,
+                        source: url,
+                        pageCount: 1
+                    })
+                    lstCategory.push(category);
                 }
-                let category = new Category({
-                    name: name,
-                    slug: slug,
-                    description: description,
-                    source: url,
-                    pageCount: 1
-                })
-                lstCategory.push(category);
             })
             let promises = lstCategory.map(category => {
                 return new Promise((resolve1, reject1) => {
-                    TimTruyenPage.FindPageCount(category.source).then(pageCount => {
+                    TimTruyenPage.FindPageCount(category.Source).then(pageCount => {
                         let newCategory = new Category({
-                            name: category.name,
-                            slug: category.slug,
-                            description: category.description,
-                            source: category.source,
+                            name: category.Name,
+                            slug: category.Slug,
+                            description: category.Description,
+                            source: category.Source,
                             pageCount: pageCount
                         })
                         resolve1(newCategory)
