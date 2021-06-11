@@ -9,6 +9,7 @@ CommonCrawler.LoadPage = (url)=>{
     return new Promise((resolve, reject) =>{
         const c2 = new Crawler({
             maxConnections: 10,
+            rateLimit: 1000,
             // This will be called for each crawled page
             callback: 
             (error, res, done) => {

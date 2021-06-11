@@ -4,5 +4,12 @@ module.exports = app => {
 
     app.get("/crawler-category", nettruyen.crawlerCategory);
 
-    app.get("/crawler-ebooks-by-source", nettruyen.crawlerEbookBySource)
+    app.get("/crawler-ebooks-by-source", nettruyen.crawler_ebook_list)
+
+    app.get("/crawler_ebook_list", nettruyen.crawlerEbookBySource)
+
+    app.get("/crawler_ebook_chapter_by_category", nettruyen.CrawlEbookChapterByCategory)
+
+    app.get("/crawl_all_nettruyen", nettruyen.CrawlAllNetTruyen)
+
 };

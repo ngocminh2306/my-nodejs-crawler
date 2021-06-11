@@ -3,6 +3,7 @@ const sql = require("./db.js");
 // constructor
 const Category = function (category) {
     this.Id = category.id;
+    this.Code = category.slug;
     this.Name = category.name;
     this.Slug = category.slug;
     this.Description = category.description;

@@ -70,7 +70,7 @@ TimTruyenPage.FindPageCount = (url) => {
     return new Promise((resolve, reject) => {
         CommonCrawler.LoadPage(url).then(res => {
             const $ = res;
-            let pageCount = 0;
+            let pageCount = 1;
             let el = $(".pagination li a[title='Trang cuối']").attr('href');
             if (el) {
                 if (el.split('=')) {

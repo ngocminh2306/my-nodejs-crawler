@@ -1,21 +1,141 @@
 const CommonCrawler = require('../helper/common.crawler');
 const Chapter = require("../models/chapter.model.js");
 const Ebook = require("../models/ebook.model");
+const Category = require("../models/category.model");
 const NetTruyenChapter = require("../nettruyen/nettruyen.chapter");
+const TimTruyenPage = require("../nettruyen/timtruyen.page")
+
 const NetTruyenEbook = function () { };
 
-NetTruyenEbook.CrawlerListEbook = (url) =>{
-    return new Promise((resovleAll, reject) => {
-        CommonCrawler.LoadPage(ebook_source_url).then(res => {
-            const $ = res.$;
-            $('.ModuleContent .items .row .item').each((i, e) => {
-                let source = $(e).find('.jtip').attr('href');
-                let name = $(e).find('.jtip').text();
-                let slug = $(e).find('.jtip').attr('href').split('/').pop();
+/**
+ * Trả về kết quả tất cả ebook và chapter của category đó
+ * @param {url category trang nguồn để crawl tất cả ebook của cate đó} url 
+ * @returns 
+ */
+NetTruyenEbook.CrawlEbookChapterByCategory = (url) =>{
+    return new Promise((resovle, reject) => {
+        NetTruyenEbook.CrawlerListEbook(url).then(listEbookWillCrawl => {
+            let promises = listEbookWillCrawl.map(ebookWillCrawl => {
+                return new Promise((_resovle, _reject) => {
+                    NetTruyenEbook.CrawlerEbook(ebookWillCrawl.Source).then(Ebooks => {
+                        _resovle(Ebooks);
+                    }).catch(err => _reject(err));
+                })
             })
+            Promise.all(promises).then(ebooks =>{
+                let _promises = ebooks.map(ebook => {
+                    return new Promise((_resovle, _reject) => { 
+                        NetTruyenEbook.SaveEbookAndChapters(ebook).then(data => _resovle(data)).catch(err => _reject(err));
+                    })
+                })
+
+                console.log('Update xong b0')
+                Promise.all(_promises).then(_data =>{
+                    console.log('Update xong b1')
+                    resovle(_data);
+                }).catch(err => {
+                    console.log(err)
+                    reject(err)
+                })
+
+            }).catch(err => reject(err))
         }).catch(err => reject(err));
     })
 }
+/**
+ * Thêm mới hoặc cập nhât ebook
+ * @param {*} ebook 
+ */
+NetTruyenEbook.SaveOrEditEbook = (ebook) => {
+    return new Promise((resovle, reject) => {
+        Ebook.findByKeyWord(ebook.slug, (err, findEbook) =>{
+            if(err)
+                reject(err)
+            else {
+                //Nếu tìm được ebook bằng slug thì update
+                if(findEbook) {
+                    console.log('Update ebook: ', ebook.Slug)
+                   Ebook.updateById(findEbook.Id, ebook, (_err, _data) => {
+                        if(_err)
+                            reject(err);
+                        else 
+                            resovle(_data);
+                    })
+                } //không tìm được thì tạo mới
+                else {
+                    console.log('Create ebook: ', ebook.Slug)
+                    Ebook.create(ebook, (_err, _data) => {
+                        if(_err)
+                            reject(err);
+                        else 
+                            resovle(_data);
+                    })
+                }
+            }
+        })
+    })
+}
+
+/**
+ * Luu Ebook va chapter
+ * @param {*} url 
+ * @returns 
+ */
+ NetTruyenEbook.SaveEbookAndChapters = (ebook) =>{
+     let chapters = ebook.chapters;
+    return new Promise((resovle, reject) => {
+        NetTruyenEbook.SaveOrEditEbook(ebook).then(data => {
+            NetTruyenChapter.SaveOrEditChapters(chapters).then(_data =>{
+                resovle({message: 'update or create success!'})
+            }).then(_err => reject(_err))
+        }).catch(err => reject(err))
+    })
+ }
+
+/**
+ * Lấy danh sách ebook để chuẩn bị crawl ebook
+ */
+NetTruyenEbook.CrawlerListEbook = (url) =>{
+    return new Promise((resovleAll, reject) => {
+
+        TimTruyenPage.FindPageCount(url).then(pageCount => {
+            let promises = [];
+            for(let page = 1; page <= pageCount; page++) {
+                let p = new Promise((_resovle, _reject) => {
+                    let crawlerUrl = url+'?page='+ page;
+                    CommonCrawler.LoadPage(crawlerUrl).then(res => {
+                        const $ = res;
+                        let items = [];
+                        $('.ModuleContent .items .row .item').each((i, e) => {
+                            let source = $(e).find('.jtip').attr('href');
+                            let name = $(e).find('.jtip').text();
+                            let slug = $(e).find('.jtip').attr('href').split('/').pop();
+                            items.push({Source: source, Name: name, Slug: slug, PageIndex: page,CrawlUrl: crawlerUrl});
+                        })
+                        _resovle(items);
+                    }).catch(err => _reject(err));
+                })
+                promises.push(p);
+            }
+            Promise.all(promises).then(datas =>{
+                let myDatas = []
+                datas.map(values => {
+                    values.map( v => {
+                        myDatas.push(v);
+                    })
+                })
+                resovleAll(myDatas);
+
+            }).catch(err =>reject(err))
+
+        }).catch(err => reject(err))
+    })
+}
+/**
+ * Crawl ebook trả về thông tin Ebook và chapter
+ * @param 
+ * @returns  Ebook và chapter
+ */
 NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
     return new Promise((resovleAll, reject) => {
         CommonCrawler.LoadPage(ebook_source_url).then(res => {
@@ -75,7 +195,8 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
                     view: view,
                     source: source,
                     slug: slug,
-                    data_id: dataId
+                    data_id: dataId,
+                    ebook_slug: ebookSlug
                 })
                 lstChapter.push(chapter);
             })

@@ -16,20 +16,23 @@ const Ebook = function (ebook) {
 };
 
 Ebook.create = (newEbook, result) => {
-    sql.query("INSERT INTO ebooks SET ?", newEbook, (err, res) => {
+    let ebook = newEbook;
+    delete ebook.chapters;
+    console.log(ebook)
+    sql.query("INSERT INTO Ebooks SET ?, CreationTime = now()", ebook, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
             return;
         }
 
-        console.log("created Ebook: ", { id: res.insertId, ...newEbook });
-        result(null, { id: res.insertId, ...newEbook });
+        console.log("created Ebook: ", { id: res.insertId, ...ebook });
+        result(null, { id: res.insertId, ...ebook });
     });
 };
 
 Ebook.findById = (ebookId, result) => {
-    sql.query(`SELECT * FROM ebooks WHERE id = ${ebookId}`, (err, res) => {
+    sql.query(`SELECT * FROM Ebooks WHERE Id = ${ebookId}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -37,35 +40,17 @@ Ebook.findById = (ebookId, result) => {
         }
 
         if (res.length) {
-            console.log("found Ebook: ", res[0]);
             result(null, res[0]);
             return;
         }
 
         // not found Ebook with the id
-        result({ kind: "not_found" }, null);
-    });
-};
-Ebook.findByRangeId = (fromId, toId, result) => {
-    sql.query(`SELECT * FROM ebooks WHERE id >= ${fromId} && id <=${toId}`, (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
-        }
-        if (res.length) {
-            console.log("found Ebook: ", res);
-            result(null, res);
-            return;
-        }
-
-        // not found Ebook with the id
-        result({ kind: "not_found" }, null);
+        result(null, null);
     });
 };
 
 Ebook.findByKeyWord = (keyword, result) => {
-    sql.query(`SELECT * FROM ebooks WHERE slug = '${keyword}'`, (err, res) => {
+    sql.query(`SELECT * FROM Ebooks WHERE Slug = '${keyword}'`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -79,27 +64,25 @@ Ebook.findByKeyWord = (keyword, result) => {
         }
 
         // not found Customer with the id
-        result({ kind: "not_found" }, null);
+        result(null, null);
     });
 };
 
 Ebook.getAll = result => {
-    sql.query("SELECT * FROM ebooks", (err, res) => {
+    sql.query("SELECT * FROM Ebooks", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
             return;
         }
-
-        console.log("ebooks: ", res);
         result(null, res);
     });
 };
 
 Ebook.updateById = (id, ebook, result) => {
     sql.query(
-        "UPDATE ebooks SET title = ?, alt = ?, source = ?, imageUrl = ?, originImageUrl = ?, view = ?, slug = ?, page = ? WHERE id = ?",
-        [ebook.title, ebook.alt, ebook.source, ebook.imageUrl, ebook.originImageUrl, ebook.view, ebook.slug, ebook.page, id],
+        "UPDATE Ebooks SET title = ?, alt = ?, source = ?, imageUrl = ?, originImageUrl = ?, view = ?, slug = ?, page = ?, content = ?, author = ?, cates = ?, status_str = ?, orther_name = ? CrawlerDate = now() WHERE Id = ?",
+        [ebook.title, ebook.alt, ebook.source, ebook.imageUrl, ebook.originImageUrl, ebook.view, ebook.slug, ebook.page, ebook.content, ebook.author, ebook.cates, ebook.status_str , ebook.orther_name, id],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -109,7 +92,7 @@ Ebook.updateById = (id, ebook, result) => {
 
             if (res.affectedRows == 0) {
                 // not found Ebook with the id
-                result({ kind: "not_found" }, null);
+                result({ kind: "ebook update not_found" }, null);
                 return;
             }
 
@@ -117,25 +100,6 @@ Ebook.updateById = (id, ebook, result) => {
             result(null, { id: id, ...ebook });
         }
     );
-};
-
-Ebook.remove = (id, result) => {
-    sql.query("DELETE FROM ebooks WHERE id = ?", id, (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(null, err);
-            return;
-        }
-
-        if (res.affectedRows == 0) {
-            // not found Ebook with the id
-            result({ kind: "not_found" }, null);
-            return;
-        }
-
-        console.log("deleted Ebook with id: ", id);
-        result(null, res);
-    });
 };
 
 module.exports = Ebook;

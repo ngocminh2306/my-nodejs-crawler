@@ -25,3 +25,41 @@ exports.crawlerEbookBySource = (req, res) => {
         else res.send(data);
     })
 };
+
+exports.crawler_ebook_list = (req, res) => {
+    nettruyen.crawler_ebook_list('http://www.nettruyentop.com/tim-truyen/gender-bender', (err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        else res.send(data);
+    })
+};
+//1. http://www.nettruyentop.com/tim-truyen/cooking (done)
+//2. http://www.nettruyentop.com/tim-truyen/action (fail)
+//3. http://www.nettruyentop.com/tim-truyen/truong-thanh (fail)
+//4. http://www.nettruyentop.com/tim-truyen/live-action (done)
+//5. http://www.nettruyentop.com/tim-truyen/truyen-scan (doing)
+//
+exports.CrawlEbookChapterByCategory = (req, res) => {
+    nettruyen.CrawlEbookChapterByCategory('http://www.nettruyentop.com/tim-truyen/truyen-scan', (err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        else res.send(data);
+    })
+};
+
+exports.CrawlAllNetTruyen = (req, res) => {
+    nettruyen.CrawlAllNetTruyen((err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        else res.send(data);
+    })
+};
