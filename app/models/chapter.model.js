@@ -3,18 +3,21 @@ const sql = require("./db.js");
 // constructor
 const Chapter = function (chapter) {
     this.Id = chapter.id;
-    this.name = chapter.name;
-    this.update_time_str = chapter.update_time_str;
-    this.view = chapter.view;
-    this.source = chapter.source;
-    this.slug = chapter.slug;
-    this.data_id = chapter.data_id;
-    this.ebook_slug = chapter.ebook_slug;
-    this.pages = chapter.pages;
+    this.Code = chapter.slug;
+    this.Name = chapter.name;
+    this.Title = chapter.name;
+    this.UpdateTimeStr = chapter.update_time_str;
+    this.View = chapter.view;
+    this.Source = chapter.source;
+    this.Slug = chapter.slug;
+    this.DataId = chapter.data_id;
+    this.EbookSlug = chapter.ebook_slug;
+    this.Content = chapter.pages;
 };
 
+
 Chapter.create = (newChapter, result) => {
-    sql.query("INSERT INTO chapter SET ?, CreationTime = now()", newChapter, (err, res) => {
+    sql.query("INSERT INTO Chapter SET ?, CreationTime = now(), EbookId = 0, Priority = 0, IsDeleted = false", newChapter, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -25,7 +28,7 @@ Chapter.create = (newChapter, result) => {
 };
 
 Chapter.findById = (chapterId, result) => {
-    sql.query(`SELECT * FROM chapter WHERE Id = ${chapterId}`, (err, res) => {
+    sql.query(`SELECT * FROM Chapter WHERE Id = ${chapterId}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -44,7 +47,7 @@ Chapter.findById = (chapterId, result) => {
 };
 
 Chapter.findByDataId = (chapterDataId, result) => {
-    sql.query(`SELECT * FROM chapter WHERE data_id = ${chapterDataId}`, (err, res) => {
+    sql.query(`SELECT * FROM Chapter WHERE DataId = ${chapterDataId}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -67,7 +70,7 @@ Chapter.findByDataId = (chapterDataId, result) => {
 };
 
 Chapter.findBySlug = (chapterSlug, result) => {
-    sql.query(`SELECT * FROM chapter WHERE slug = '${chapterSlug}'`, (err, res) => {
+    sql.query(`SELECT * FROM Chapter WHERE Slug = '${chapterSlug}'`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -86,7 +89,7 @@ Chapter.findBySlug = (chapterSlug, result) => {
 };
 
 Chapter.getAll = result => {
-    sql.query("SELECT * FROM chapter", (err, res) => {
+    sql.query("SELECT * FROM Chapter", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -100,8 +103,8 @@ Chapter.getAll = result => {
 
 Chapter.updateById = (id, chapter, result) => {
     sql.query(
-        "UPDATE chapter SET name = ?, update_time_str = ?, view = ?, source = ?, slug = ?, data_id = ?, ebook_slug = ?, pages = ?, CrawlerDate = now()   WHERE Id = ?",
-        [chapter.name, chapter.update_time_str, chapter.view, chapter.source, chapter.slug, chapter.data_id, chapter.ebook_slug, chapter.pages, id],
+        "UPDATE Chapter SET Title = ?, Name = ?, Code = ?, UpdateTimeStr = ?, View = ?, Source = ?, Slug = ?, DataId = ?, EbookSlug = ?, Content = ?, ImageUrl = ?, CrawlerDate = now(), IsDeleted = false   WHERE Id = ?",
+        [chapter.Title, chapter.Name, chapter.Slug, chapter.UpdateTimeStr, chapter.View, chapter.Source, chapter.Slug, chapter.DataId, chapter.EbookSlug, chapter.Content, chapter.ImageUrl, id],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -111,7 +114,7 @@ Chapter.updateById = (id, chapter, result) => {
 
             if (res.affectedRows == 0) {
                 // not found Customer with the id
-                result({ kind: "update not_found" }, null);
+                result(null, null);
                 return;
             }
 

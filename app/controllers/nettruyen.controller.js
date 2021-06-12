@@ -43,7 +43,10 @@ exports.crawler_ebook_list = (req, res) => {
 //5. http://www.nettruyentop.com/tim-truyen/truyen-scan (doing)
 //
 exports.CrawlEbookChapterByCategory = (req, res) => {
-    nettruyen.CrawlEbookChapterByCategory('http://www.nettruyentop.com/tim-truyen/truyen-scan', (err, data) => {
+    let fromIndex = Number(req.query.fromIndex);
+    let toIndex = Number(req.query.toIndex);
+    let url = req.query.url;
+    nettruyen.CrawlEbookChapterByCategory(url, fromIndex, toIndex, (err, data) => {
         if (err)
             res.status(500).send({
                 message:

@@ -4,6 +4,7 @@ const NetTruyenChapter = function () { };
 
 NetTruyenChapter.CrawlerChapter = (chapter_source_url) => {
     return new Promise((resovle, reject) => {
+        console.log('crawle chapter :' + chapter_source_url)
         CommonCrawler.LoadPage(chapter_source_url).then(res => {
             let $ = res;
             let datas = [];
@@ -17,7 +18,7 @@ NetTruyenChapter.CrawlerChapter = (chapter_source_url) => {
 }
 NetTruyenChapter.SaveOrEditChapter = (chapter) => {
     return new Promise((resovle, reject) => {
-        Chapter.findByDataId(chapter.data_id, (err, data) =>{
+        Chapter.findByDataId(chapter.DataId, (err, data) =>{
             if(err)
                 reject(err)
             else {

@@ -34,8 +34,8 @@ nettruyen.crawler_ebook_list = (url, result) => {
     })
 }
 
-nettruyen.CrawlEbookChapterByCategory = (url, result) => {
-    NetTruyenEbook.CrawlEbookChapterByCategory(url).then(data => {
+nettruyen.CrawlEbookChapterByCategory = (url, fromIndex, toIndex, result) => {
+    NetTruyenEbook.CrawlEbookChapterByCategory(url, fromIndex, toIndex).then(data => {
         result(null, data);
     }).catch(err => {
         result(err, null)

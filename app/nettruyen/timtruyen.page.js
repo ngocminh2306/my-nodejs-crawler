@@ -25,6 +25,7 @@ TimTruyenPage.FindAllMegaMenu = (url) => {
                     })
                     lstCategory.push(category);
                 }
+                console.log('Tìm được lstCategory!')
             })
             let promises = lstCategory.map(category => {
                 return new Promise((resolve1, reject1) => {
@@ -69,6 +70,7 @@ TimTruyenPage.FindAllMegaMenu = (url) => {
 TimTruyenPage.FindPageCount = (url) => {
     return new Promise((resolve, reject) => {
         CommonCrawler.LoadPage(url).then(res => {
+            console.log('Tìm  PageCount!')
             const $ = res;
             let pageCount = 1;
             let el = $(".pagination li a[title='Trang cuối']").attr('href');

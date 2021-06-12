@@ -12,9 +12,9 @@ const NetTruyenEbook = function () { };
  * @param {url category trang nguồn để crawl tất cả ebook của cate đó} url 
  * @returns 
  */
-NetTruyenEbook.CrawlEbookChapterByCategory = (url) =>{
+NetTruyenEbook.CrawlEbookChapterByCategory = (url, fromIndex, toIndex) =>{
     return new Promise((resovle, reject) => {
-        NetTruyenEbook.CrawlerListEbook(url).then(listEbookWillCrawl => {
+        NetTruyenEbook.CrawlerListEbook(url, fromIndex, toIndex).then(listEbookWillCrawl => {
             let promises = listEbookWillCrawl.map(ebookWillCrawl => {
                 return new Promise((_resovle, _reject) => {
                     NetTruyenEbook.CrawlerEbook(ebookWillCrawl.Source).then(Ebooks => {
@@ -29,9 +29,8 @@ NetTruyenEbook.CrawlEbookChapterByCategory = (url) =>{
                     })
                 })
 
-                console.log('Update xong b0')
                 Promise.all(_promises).then(_data =>{
-                    console.log('Update xong b1')
+                    console.log('NetTruyenEbook.SaveEbookAndChapters done!')
                     resovle(_data);
                 }).catch(err => {
                     console.log(err)
@@ -48,7 +47,7 @@ NetTruyenEbook.CrawlEbookChapterByCategory = (url) =>{
  */
 NetTruyenEbook.SaveOrEditEbook = (ebook) => {
     return new Promise((resovle, reject) => {
-        Ebook.findByKeyWord(ebook.slug, (err, findEbook) =>{
+        Ebook.findByKeyWord(ebook.Slug, (err, findEbook) =>{
             if(err)
                 reject(err)
             else {
@@ -83,6 +82,7 @@ NetTruyenEbook.SaveOrEditEbook = (ebook) => {
  */
  NetTruyenEbook.SaveEbookAndChapters = (ebook) =>{
      let chapters = ebook.chapters;
+     console.log(chapters)
     return new Promise((resovle, reject) => {
         NetTruyenEbook.SaveOrEditEbook(ebook).then(data => {
             NetTruyenChapter.SaveOrEditChapters(chapters).then(_data =>{
@@ -95,14 +95,29 @@ NetTruyenEbook.SaveOrEditEbook = (ebook) => {
 /**
  * Lấy danh sách ebook để chuẩn bị crawl ebook
  */
-NetTruyenEbook.CrawlerListEbook = (url) =>{
+NetTruyenEbook.CrawlerListEbook = (url, fromIndex, toIndex) =>{
     return new Promise((resovleAll, reject) => {
 
         TimTruyenPage.FindPageCount(url).then(pageCount => {
             let promises = [];
-            for(let page = 1; page <= pageCount; page++) {
+            if(!fromIndex) fromIndex = 1;
+            else {
+                if(fromIndex > pageCount) {
+                    toIndex = pageCount;
+                }
+            }
+            if(!toIndex) 
+                toIndex = pageCount;
+            else {
+                if(toIndex > pageCount) {
+                    toIndex = pageCount;
+                }
+            }
+            for(let page = fromIndex; page <= toIndex; page++) {
+                console.log('Crawl page index: ' + page)
                 let p = new Promise((_resovle, _reject) => {
                     let crawlerUrl = url+'?page='+ page;
+                    console.log('Crawl url: ' + crawlerUrl)
                     CommonCrawler.LoadPage(crawlerUrl).then(res => {
                         const $ = res;
                         let items = [];
@@ -117,7 +132,7 @@ NetTruyenEbook.CrawlerListEbook = (url) =>{
                 })
                 promises.push(p);
             }
-            Promise.all(promises).then(datas =>{
+            Promise.all(promises).then(datas => {
                 let myDatas = []
                 datas.map(values => {
                     values.map( v => {
@@ -167,8 +182,11 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
                 view: view,
                 rate: rate,
                 status_str: status_str,
-                slug: ebookSlug
+                slug: ebookSlug,
+                source: ebook_source_url
             })
+            console.log('Tìm được Ebooks!')
+            console.log(Ebooks)
             let lstChapter = [];
             $(".list-chapter ul li:not(.heading)").each((index, el) => {
                 let source, slugArray, slug, dataId;
@@ -201,17 +219,23 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
                 lstChapter.push(chapter);
             })
             let promises = lstChapter.map(v => {
+                // console.log(v)
                 return new Promise((resovle1, reject1) => {
-                    NetTruyenChapter.CrawlerChapter(v.source).then(res => {
+                    console.log('CrawlerChapter !' )
+                    NetTruyenChapter.CrawlerChapter(v.Source).then(res => {
                         resovle1(res)
                     }).catch(err => reject1(err));
                 })
             })
             Promise.all(promises).then(data =>{
                 data.map((v,i) => {
-                    let index = lstChapter.findIndex(x=>x.source == v.source);
-                    lstChapter[index].pages = v.pages.toString();            
+                    // console.log('v.source: ',v.source);
+                    // console.log('----lstChapter----: ',lstChapter);
+                    let index = lstChapter.findIndex(x=>x.Source == v.source);
+                    // console.log('lstChapter[index]: ',index);
+                    lstChapter[index].Content = v.pages.toString();            
                 })
+                console.log('Tìm được lstChapter!')
                 Ebooks.chapters = lstChapter;
                 //Insert ebook
                 resovleAll(Ebooks)

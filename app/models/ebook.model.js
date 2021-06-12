@@ -2,16 +2,19 @@ const sql = require("./db.js");
 
 // constructor
 const Ebook = function (ebook) {
-    this.title = ebook.title;
-    this.imageUrl = ebook.imageUrl;
-    this.content = ebook.content;
-    this.author = ebook.author;
-    this.cates = ebook.cates;
-    this.view = ebook.view;
-    this.rate = ebook.rate;
-    this.slug = ebook.slug;
-    this.orther_name = ebook.orther_name;
-    this.status_str = ebook.status_str;
+    this.Code = ebook.slug;
+    this.Name =  ebook.title;
+    this.Title = ebook.title;
+    this.Description = ebook.content;
+    this.ImageUrl = ebook.imageUrl;
+    this.Author = ebook.author;
+    this.CategoryString = ebook.cates;
+    this.View = ebook.view;
+    this.Rate = ebook.rate;
+    this.OrtherName = ebook.orther_name;
+    this.StatusString = ebook.status_str;
+    this.Slug =ebook.slug;
+    this.Source = ebook.source;
     this.chapters = ebook.chapters? ebookDetail.chapters: [];
 };
 
@@ -19,14 +22,12 @@ Ebook.create = (newEbook, result) => {
     let ebook = newEbook;
     delete ebook.chapters;
     console.log(ebook)
-    sql.query("INSERT INTO Ebooks SET ?, CreationTime = now()", ebook, (err, res) => {
+    sql.query("INSERT INTO Ebooks SET ?, CreationTime = now(), IsDeleted = false, EbookCategoryId = 0, Priority = 0", ebook, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
             return;
         }
-
-        console.log("created Ebook: ", { id: res.insertId, ...ebook });
         result(null, { id: res.insertId, ...ebook });
     });
 };
@@ -81,8 +82,8 @@ Ebook.getAll = result => {
 
 Ebook.updateById = (id, ebook, result) => {
     sql.query(
-        "UPDATE Ebooks SET title = ?, alt = ?, source = ?, imageUrl = ?, originImageUrl = ?, view = ?, slug = ?, page = ?, content = ?, author = ?, cates = ?, status_str = ?, orther_name = ? CrawlerDate = now() WHERE Id = ?",
-        [ebook.title, ebook.alt, ebook.source, ebook.imageUrl, ebook.originImageUrl, ebook.view, ebook.slug, ebook.page, ebook.content, ebook.author, ebook.cates, ebook.status_str , ebook.orther_name, id],
+        "UPDATE Ebooks SET Code = ?, Title = ?, Name = ?, Source = ?, ImageUrl = ?, OriginImageUrl = ?, View = ?, Slug = ?, Description = ?, Author = ?, CategoryString = ?, StatusString = ?, Rate = ?, OrtherName = ? CrawlerDate = now() WHERE Id = ?",
+        [ebook.Code, ebook.Title, ebook.Name, ebook.Source, ebook.ImageUrl, ebook.OriginImageUrl, ebook.View, ebook.Slug, ebook.Description, ebook.Author, ebook.CategoryString, ebook.StatusString , ebook.OrtherName, ebook.Rate, id],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -92,7 +93,7 @@ Ebook.updateById = (id, ebook, result) => {
 
             if (res.affectedRows == 0) {
                 // not found Ebook with the id
-                result({ kind: "ebook update not_found" }, null);
+                result(null, null);
                 return;
             }
 
