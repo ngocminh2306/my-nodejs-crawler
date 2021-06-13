@@ -7,7 +7,7 @@ const Chapter = function (chapter) {
     this.Name = chapter.name;
     this.Title = chapter.name;
     this.UpdateTimeStr = chapter.update_time_str;
-    this.View = chapter.view;
+    this.View = chapter.view?chapter.view:0;
     this.Source = chapter.source;
     this.Slug = chapter.slug;
     this.DataId = chapter.data_id;
@@ -30,13 +30,13 @@ Chapter.create = (newChapter, result) => {
 Chapter.findById = (chapterId, result) => {
     sql.query(`SELECT * FROM Chapter WHERE Id = ${chapterId}`, (err, res) => {
         if (err) {
-            console.log("error: ", err);
+            // console.log("error: ", err);
             result(err, null);
             return;
         }
 
         if (res.length > 0) {
-            console.log("found Chapter: ", res[0]);
+            // console.log("found Chapter: ", res[0]);
             result(null, res[0]);
             return;
         }
@@ -55,12 +55,12 @@ Chapter.findByDataId = (chapterDataId, result) => {
         }
 
         if (res.length) {
-            console.log("found Chapter: ", res[0]);
+            // console.log("found Chapter: ", res[0]);
             result(null, res[0]);
             return;
         }
         if (res.length == 0) {
-            console.log("found Chapter: ", res[0]);
+            // console.log("found Chapter: ", res[0]);
             result(null, null);
             return;
         }
@@ -103,7 +103,7 @@ Chapter.getAll = result => {
 
 Chapter.updateById = (id, chapter, result) => {
     sql.query(
-        "UPDATE Chapter SET Title = ?, Name = ?, Code = ?, UpdateTimeStr = ?, View = ?, Source = ?, Slug = ?, DataId = ?, EbookSlug = ?, Content = ?, ImageUrl = ?, CrawlerDate = now(), IsDeleted = false   WHERE Id = ?",
+        "UPDATE Chapter SET Title = ?, Name = ?, Code = ?, UpdateTimeStr = ?, View = ?, Source = ?, Slug = ?, DataId = ?, EbookSlug = ?, Content = ?, ImageUrl = ?, IsDeleted = false   WHERE Id = ?",
         [chapter.Title, chapter.Name, chapter.Slug, chapter.UpdateTimeStr, chapter.View, chapter.Source, chapter.Slug, chapter.DataId, chapter.EbookSlug, chapter.Content, chapter.ImageUrl, id],
         (err, res) => {
             if (err) {

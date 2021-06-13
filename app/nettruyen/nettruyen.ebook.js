@@ -2,6 +2,7 @@ const CommonCrawler = require('../helper/common.crawler');
 const Chapter = require("../models/chapter.model.js");
 const Ebook = require("../models/ebook.model");
 const Category = require("../models/category.model");
+const CrawlerLog = require("../models/crawler.log.model")
 const NetTruyenChapter = require("../nettruyen/nettruyen.chapter");
 const TimTruyenPage = require("../nettruyen/timtruyen.page")
 
@@ -31,6 +32,57 @@ NetTruyenEbook.CrawlEbookChapterByCategory = (url, fromIndex, toIndex) =>{
 
                 Promise.all(_promises).then(_data =>{
                     console.log('NetTruyenEbook.SaveEbookAndChapters done!')
+                    CrawlerLog.create(new CrawlerLog({
+                        Type: 1,
+                        EntityOrClassName: 'Chapter, Ebook',
+                        Title: url,
+                        Note: `From: ${fromIndex} - To: ${toIndex}`
+                    }), (err, data) => {
+
+                    })
+                    resovle(_data);
+                }).catch(err => {
+                    console.log(err)
+                    reject(err)
+                })
+
+            }).catch(err => reject(err))
+        }).catch(err => reject(err));
+    })
+}
+/**
+ * Crawl Ebook dựa vào url và page index
+ * @param {*} url 
+ * @param {*} fromIndex 
+ * @param {*} toIndex 
+ */
+NetTruyenEbook.CrawlEbookByCategory = (url, fromIndex, toIndex) =>{
+    return new Promise((resovle, reject) => {
+        NetTruyenEbook.CrawlerListEbook(url, fromIndex, toIndex).then(listEbookWillCrawl => {
+            let promises = listEbookWillCrawl.map(ebookWillCrawl => {
+                return new Promise((_resovle, _reject) => {
+                    NetTruyenEbook.CrawlerEbookOnly(ebookWillCrawl.Source).then(Ebooks => {
+                        _resovle(Ebooks);
+                    }).catch(err => _reject(err));
+                })
+            })
+            Promise.all(promises).then(ebooks =>{
+                let _promises = ebooks.map(ebook => {
+                    return new Promise((_resovle, _reject) => { 
+                        NetTruyenEbook.SaveOrEditEbook(ebook).then(data => _resovle(data)).catch(err => _reject(err));
+                    })
+                })
+
+                Promise.all(_promises).then(_data =>{
+                    console.log('NetTruyenEbook.SaveOrEditEbook done!')
+                    CrawlerLog.create(new CrawlerLog({
+                        Type: 1,
+                        EntityOrClassName: 'Ebook',
+                        Title: url,
+                        Note: `From: ${fromIndex} - To: ${toIndex}`
+                    }), (err, data) => {
+
+                    })
                     resovle(_data);
                 }).catch(err => {
                     console.log(err)
@@ -82,7 +134,6 @@ NetTruyenEbook.SaveOrEditEbook = (ebook) => {
  */
  NetTruyenEbook.SaveEbookAndChapters = (ebook) =>{
      let chapters = ebook.chapters;
-     console.log(chapters)
     return new Promise((resovle, reject) => {
         NetTruyenEbook.SaveOrEditEbook(ebook).then(data => {
             NetTruyenChapter.SaveOrEditChapters(chapters).then(_data =>{
@@ -166,7 +217,7 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
             let view = 0
             $('#item-detail .detail-info .list-info .row .col-xs-8').each((i, e) => {
                 if (i == 4) {
-                    view = $(e).text();
+                    view = Number($(e).text().replace('.',''));
                 }
             })
             let rate = Number($("#item-detail .col-info span[itemprop='ratingValue']").text());
@@ -186,7 +237,7 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
                 source: ebook_source_url
             })
             console.log('Tìm được Ebooks!')
-            console.log(Ebooks)
+            // console.log(Ebooks)
             let lstChapter = [];
             $(".list-chapter ul li:not(.heading)").each((index, el) => {
                 let source, slugArray, slug, dataId;
@@ -203,7 +254,7 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
                         update_time_str = $(e).text();
                     }
                     if (i == 2) {
-                        view = Number($(e).text());
+                        view = Number($(e).text().replace('.',''));
                     }
                 })
                 let chapter = new Chapter({
@@ -241,6 +292,48 @@ NetTruyenEbook.CrawlerEbook = (ebook_source_url) => {
                 resovleAll(Ebooks)
             }).catch(err => reject(err))
 
+        }).catch(err => reject(err));
+    })
+}
+/**
+ * Chỉ crawl Ebook không clraw chatper 
+ */
+NetTruyenEbook.CrawlerEbookOnly = (ebook_source_url) => {
+    return new Promise((resovleAll, reject) => {
+        CommonCrawler.LoadPage(ebook_source_url).then(res => {
+            let $ = res;
+            let title = $('#item-detail .title-detail').text();
+            let imageUrl = $('#item-detail .detail-info img').attr('src');
+            let content = $('#item-detail .detail-content p').text();
+            let author = $('#item-detail .detail-info .author a').text();
+            let cates = $('#item-detail .detail-info .list-info .kind .col-xs-8').text();
+            let slugEbookArray = ebook_source_url.split('/');
+            let ebookSlug =  slugEbookArray[slugEbookArray.length - 1];
+            
+            let view = 0
+            $('#item-detail .detail-info .list-info .row .col-xs-8').each((i, e) => {
+                if (i == 4) {
+                    view = Number($(e).text().replace('.',''));
+                }
+            })
+            let rate = Number($("#item-detail .col-info span[itemprop='ratingValue']").text());
+            let orther_name = $('#item-detail .detail-info h2.other-name').text();
+            let status_str = $('#item-detail .detail-info .list-info .status p.col-xs-8').text();
+            let Ebooks = new Ebook({
+                title: title,
+                imageUrl: imageUrl,
+                content: content,
+                orther_name: orther_name,
+                author: author,
+                cates: cates,
+                view: view,
+                rate: rate,
+                status_str: status_str,
+                slug: ebookSlug,
+                source: ebook_source_url
+            })
+            console.log('Tìm được Ebooks!')
+            resovleAll(Ebooks);
         }).catch(err => reject(err));
     })
 }

@@ -5,8 +5,8 @@ const Chapter = require("../models/chapter.model.js");
 
 const TimTruyenPage = require("../nettruyen/timtruyen.page");
 const NetTruyenEbook = require("../nettruyen/nettruyen.ebook");
+const NetTruyenChapter = require("../nettruyen/nettruyen.chapter");
 const Helper = require("../helper/helper.js");
-const { data } = require('cheerio/lib/api/attributes');
 
 const nettruyen = function () { };
 
@@ -42,6 +42,20 @@ nettruyen.CrawlEbookChapterByCategory = (url, fromIndex, toIndex, result) => {
     })
 }
 
+nettruyen.CrawlEbookByCategory = (url, fromIndex, toIndex, result) => {
+    NetTruyenEbook.CrawlEbookByCategory(url, fromIndex, toIndex).then(data => {
+        result(null, data);
+    }).catch(err => {
+        result(err, null)
+    })
+}
+nettruyen.CrawlAndSaveChapter = (ebook_source_url, result) =>{
+    NetTruyenChapter.CrawlAndSaveChapter(ebook_source_url).then(data => {
+        result(null, data);
+    }).catch(err => {
+        result(err, null)
+    })
+}
 nettruyen.CrawlAllNetTruyen = (result) => {
     Category.getAll((err, datas) => {
         if(err)

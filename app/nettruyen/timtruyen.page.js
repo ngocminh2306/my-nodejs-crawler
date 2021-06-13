@@ -1,4 +1,3 @@
-const { data } = require("cheerio/lib/api/attributes");
 const Category = require("../models/category.model.js");
 const CommonCrawler = require('../helper/common.crawler');
 const TimTruyenPage = function () { };

@@ -55,7 +55,30 @@ exports.CrawlEbookChapterByCategory = (req, res) => {
         else res.send(data);
     })
 };
-
+exports.CrawlEbookByCategory = (req, res) => {
+    let fromIndex = Number(req.query.fromIndex);
+    let toIndex = Number(req.query.toIndex);
+    let url = req.query.url;
+    nettruyen.CrawlEbookByCategory(url, fromIndex, toIndex, (err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        else res.send(data);
+    })
+};
+exports.CrawlAndSaveChapter = (req, res) => {
+    let url = req.query.url;
+    nettruyen.CrawlAndSaveChapter(url, (err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        else res.send(data);
+    })
+};
 exports.CrawlAllNetTruyen = (req, res) => {
     nettruyen.CrawlAllNetTruyen((err, data) => {
         if (err)

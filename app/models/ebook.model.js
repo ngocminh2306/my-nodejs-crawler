@@ -82,8 +82,8 @@ Ebook.getAll = result => {
 
 Ebook.updateById = (id, ebook, result) => {
     sql.query(
-        "UPDATE Ebooks SET Code = ?, Title = ?, Name = ?, Source = ?, ImageUrl = ?, OriginImageUrl = ?, View = ?, Slug = ?, Description = ?, Author = ?, CategoryString = ?, StatusString = ?, Rate = ?, OrtherName = ? CrawlerDate = now() WHERE Id = ?",
-        [ebook.Code, ebook.Title, ebook.Name, ebook.Source, ebook.ImageUrl, ebook.OriginImageUrl, ebook.View, ebook.Slug, ebook.Description, ebook.Author, ebook.CategoryString, ebook.StatusString , ebook.OrtherName, ebook.Rate, id],
+        "UPDATE Ebooks SET Code = ?, Title = ?, Name = ?, Source = ?, ImageUrl = ?, OriginImageUrl = ?, View = ?, Slug = ?, Description = ?, Author = ?, CategoryString = ?, StatusString = ?, Rate = ?, OrtherName = ?, CrawlerDate = now() WHERE Id = ?",
+        [ebook.Code, ebook.Title, ebook.Name, ebook.Source, ebook.ImageUrl, ebook.OriginImageUrl, ebook.View, ebook.Slug, ebook.Description, ebook.Author, ebook.CategoryString, ebook.StatusString , ebook.Rate, ebook.OrtherName,  id],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
