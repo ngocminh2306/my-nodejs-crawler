@@ -21,7 +21,6 @@ const Ebook = function (ebook) {
 Ebook.create = (newEbook, result) => {
     let ebook = newEbook;
     delete ebook.chapters;
-    console.log(ebook)
     sql.query("INSERT INTO Ebooks SET ?, CreationTime = now(), IsDeleted = false, EbookCategoryId = 0, Priority = 0", ebook, (err, res) => {
         if (err) {
             console.log("error: ", err);
