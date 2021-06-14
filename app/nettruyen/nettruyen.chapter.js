@@ -74,7 +74,7 @@ NetTruyenChapter.CrawlerChapterOnly = (ebook_source_url) => {
                 let promises = lstChapter.map(v => {
                     // console.log(v)
                     return new Promise((resovle1, reject1) => {
-                        console.log('CrawlerChapter !' )
+                        // console.log('CrawlerChapter !' )
                         NetTruyenChapter.CrawlerChapter(v.Source).then(res => {
                             resovle1(res)
                         }).catch(err => reject1(err));
@@ -95,7 +95,7 @@ NetTruyenChapter.CrawlerChapterOnly = (ebook_source_url) => {
 }
 NetTruyenChapter.CrawlerChapter = (chapter_source_url) => {
     return new Promise((resovle, reject) => {
-        console.log('crawle chapter :' + chapter_source_url)
+        // console.log('crawle chapter :' + chapter_source_url)
         CommonCrawler.LoadPage(chapter_source_url).then(res => {
             let $ = res;
             let datas = [];
@@ -151,12 +151,12 @@ NetTruyenChapter.CrawlAndSaveChapter = (ebook_source_url) =>{
         let promises = [];
         NetTruyenChapter.CrawlerChapterOnly(ebook_source_url).then(lstChapter =>{
             NetTruyenChapter.SaveOrEditChapters(lstChapter).then(data => {
-                console.log('NetTruyenEbook.SaveOrEditEbook done!')
+                // console.log('NetTruyenEbook.SaveOrEditEbook done!')
                 CrawlerLog.create(new CrawlerLog({
                     Type: 2,
                     EntityOrClassName: 'Chapter',
                     Title: ebook_source_url,
-                    Note: lstChapter.toString()
+                    Note: lstChapter.length + ' chapter'
                 }), (err, data) => {
 
                 })

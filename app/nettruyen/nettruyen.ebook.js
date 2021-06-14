@@ -77,7 +77,7 @@ NetTruyenEbook.CrawlEbookByCategory = (url, fromIndex, toIndex) =>{
                     console.log('NetTruyenEbook.SaveOrEditEbook done!')
                     CrawlerLog.create(new CrawlerLog({
                         Type: 1,
-                        EntityOrClassName: 'Ebook',
+                        EntityOrClassName: 'Ebooks',
                         Title: url,
                         Note: `From: ${fromIndex} - To: ${toIndex}`
                     }), (err, data) => {
