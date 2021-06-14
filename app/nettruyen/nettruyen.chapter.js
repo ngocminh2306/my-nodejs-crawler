@@ -146,7 +146,7 @@ NetTruyenChapter.SaveOrEditChapters = (chapters) => {
     })
 }
 
-NetTruyenChapter.CrawlAndSaveChapter = (ebook_source_url) =>{
+NetTruyenChapter.CrawlAndSaveChapter = (ebook_source_url, pageIndex) =>{
     return new Promise((resovleAll, reject) => {
         let promises = [];
         NetTruyenChapter.CrawlerChapterOnly(ebook_source_url).then(lstChapter =>{
@@ -156,7 +156,7 @@ NetTruyenChapter.CrawlAndSaveChapter = (ebook_source_url) =>{
                     Type: 2,
                     EntityOrClassName: 'Chapter',
                     Title: ebook_source_url,
-                    Note: lstChapter.length + ' chapter'
+                    Note: lstChapter.length + ' chapter - page index: ' + pageIndex
                 }), (err, data) => {
 
                 })

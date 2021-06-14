@@ -70,7 +70,8 @@ exports.CrawlEbookByCategory = (req, res) => {
 };
 exports.CrawlAndSaveChapter = (req, res) => {
     let url = req.query.url;
-    nettruyen.CrawlAndSaveChapter(url, (err, data) => {
+    let pageIndex = req.query.index;
+    nettruyen.CrawlAndSaveChapter(url, pageIndex, (err, data) => {
         if (err)
             res.status(500).send({
                 message:

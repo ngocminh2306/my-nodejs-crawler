@@ -49,8 +49,8 @@ nettruyen.CrawlEbookByCategory = (url, fromIndex, toIndex, result) => {
         result(err, null)
     })
 }
-nettruyen.CrawlAndSaveChapter = (ebook_source_url, result) =>{
-    NetTruyenChapter.CrawlAndSaveChapter(ebook_source_url).then(data => {
+nettruyen.CrawlAndSaveChapter = (ebook_source_url, pageIndex, result) =>{
+    NetTruyenChapter.CrawlAndSaveChapter(ebook_source_url, pageIndex).then(data => {
         result(null, data);
     }).catch(err => {
         result(err, null)

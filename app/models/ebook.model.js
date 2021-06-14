@@ -9,7 +9,7 @@ const Ebook = function (ebook) {
     this.ImageUrl = ebook.imageUrl;
     this.Author = ebook.author;
     this.CategoryString = ebook.cates;
-    this.View = ebook.view;
+    this.View = ebook.view?ebook.view:0;
     this.Rate = ebook.rate;
     this.OrtherName = ebook.orther_name;
     this.StatusString = ebook.status_str;
@@ -97,7 +97,7 @@ Ebook.updateById = (id, ebook, result) => {
                 return;
             }
 
-            console.log("updated Ebook: ", { id: id, ...ebook });
+            // console.log("updated Ebook: ", { id: id, ...ebook });
             result(null, { id: id, ...ebook });
         }
     );
