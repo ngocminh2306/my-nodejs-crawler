@@ -106,12 +106,12 @@ NetTruyenEbook.SaveOrEditEbook = (ebook) => {
                 //Nếu tìm được ebook bằng slug thì update
                 if(findEbook) {
                     console.log('Update ebook: ', ebook.Slug)
-                   Ebook.updateById(findEbook.Id, ebook, (_err, _data) => {
-                        if(_err)
-                            reject(err);
-                        else 
-                            resovle(_data);
-                    })
+                //    Ebook.updateById(findEbook.Id, ebook, (_err, _data) => {
+                //         if(_err)
+                //             reject(err);
+                //         else 
+                //             resovle(_data);
+                //     })
                 } //không tìm được thì tạo mới
                 else {
                     console.log('Create ebook: ', ebook.Slug)

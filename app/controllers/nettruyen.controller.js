@@ -90,3 +90,19 @@ exports.CrawlAllNetTruyen = (req, res) => {
         else res.send(data);
     })
 };
+
+exports.dowloadEbookImage= (req, res) =>{
+    let url = req.query.url;
+    let slug = req.query.slug;
+    nettruyen.dowloadEbookImage(url, slug, (err, data) => {
+        console.log(data)
+        if (err) {
+            console.log(err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        }
+        else res.send(data);
+    })
+};
