@@ -101,6 +101,8 @@ nettruyen.dowloadEbookImage = (ebook_source_url,slug, result) =>{
                         })
                     }
                 })
+            }else {
+                result(null, {Update: 'Khong download anh vi da co!'});
             }
         }
     })
