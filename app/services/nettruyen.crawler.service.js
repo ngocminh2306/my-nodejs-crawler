@@ -81,5 +81,31 @@ nettruyen.CrawlAllNetTruyen = (result) => {
     }) 
 }
 
+nettruyen.dowloadEbookImage = (ebook_source_url,slug, result) =>{
+    Ebook.findByKeyWord(slug, (err, data) => {
+        if(err)
+            result(err, null);
+        else
+        {
+            if(data && !data.OriginImageUrl) {
+                Helper.downloadEbookImage(`http:${ebook_source_url}`, slug, (_err, _data) => {
+                    if(_err)
+                        result(_err, null);
+                    else
+                    {
+                        Ebook.updateImage(data.Id, _data,  (__err, __data) => {
+                            if(err)
+                                result(__err, null);
+                            else
+                                result(null, __data);
+                        })
+                    }
+                })
+            }else {
+                result(null, {Update: 'Khong download anh vi da co!'});
+            }
+        }
+    })
+}
 
 module.exports = nettruyen;

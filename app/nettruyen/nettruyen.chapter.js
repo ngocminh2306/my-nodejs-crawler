@@ -115,12 +115,13 @@ NetTruyenChapter.SaveOrEditChapter = (chapter) => {
             else {
                 //Đã có chapter trung data_id thì update
                 if(data) {
-                    Chapter.updateById(data.Id, chapter, (_err,_data) =>{
-                        if(_err)
-                            reject(_err)
-                        else 
-                            resovle(_data)
-                    })
+                    // Chapter.updateById(data.Id, chapter, (_err,_data) =>{
+                    //     if(_err)
+                    //         reject(_err)
+                    //     else 
+                    //         resovle(_data)
+                    // })
+                    resovle(data)
                 }else { //chưa có thì thêm mới
                     Chapter.create(chapter, (_err,_data) =>{
                         if(_err)

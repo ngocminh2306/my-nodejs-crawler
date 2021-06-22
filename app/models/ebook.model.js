@@ -102,4 +102,26 @@ Ebook.updateById = (id, ebook, result) => {
     );
 };
 
+Ebook.updateImage = (id, imageUrl, result) => {
+    sql.query(
+        "UPDATE Ebooks SET OriginImageUrl = ?, CrawlerDate = now() WHERE Id = ?",
+        [imageUrl, id],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result( err, null);
+                return;
+            }
+
+            if (res.affectedRows == 0) {
+                // not found Ebook with the id
+                result(null, null);
+                return;
+            }
+
+            console.log("updated Ebook: " + id);
+            result(null, { id: id, imageUrl:imageUrl });
+        }
+    );
+};
 module.exports = Ebook;
