@@ -17,4 +17,10 @@ module.exports = app => {
     app.get("/crawler_ebook_by_category", nettruyen.CrawlEbookByCategory)
 
     app.get("/download_ebook_image", nettruyen.dowloadEbookImage)
+
+    app.get("/recreate_ebook_cate", nettruyen.reCreateEbookCate)
+
+    app.get("/download_chapter_images", nettruyen.DownloadChapterImage)
+
+    app.get("/download_chapter_images_from_list_ebook", nettruyen.DownloadChapterImageFormListEbook)
 };

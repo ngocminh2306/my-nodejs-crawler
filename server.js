@@ -14,7 +14,7 @@ app.use(
 app.get('/', (req, res) => {
   res.json({'message': 'ok'});
 })
-require("./app/routes/customer.routes.js")(app);
+// require("./app/routes/customer.routes.js")(app);
 require("./app/routes/category.routes.js")(app);
 // require("./app/routes/ebook.routes.js")(app);
 require("./app/routes/nettruyen.routes.js")(app);

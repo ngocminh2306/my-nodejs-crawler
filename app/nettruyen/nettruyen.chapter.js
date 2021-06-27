@@ -2,6 +2,8 @@ const CommonCrawler = require('../helper/common.crawler');
 const Chapter = require("../models/chapter.model.js");
 const CrawlerLog = require("../models/crawler.log.model");
 const Ebook = require("../models/ebook.model.js");
+const Helper = require("../helper/helper.js");
+
 const NetTruyenChapter = function () { };
 
 NetTruyenChapter.CrawlerChapterOnly = (ebook_source_url) => {
@@ -167,5 +169,64 @@ NetTruyenChapter.CrawlAndSaveChapter = (ebook_source_url, pageIndex) =>{
         }).catch(err => reject(err))
     })
 }
-
+NetTruyenChapter.DownloadChapterImage = (ebookSlug) =>{
+    return new Promise((resovleAll, reject) => {
+        Chapter.getAllByEbookSlug(ebookSlug, (err, chapters) =>{
+            if(err)
+                reject(err)
+            else {
+                if(chapters && chapters.length > 0) {
+                    let promises = chapters.map(chapter => {
+                        return new Promise((_resovle, _reject) => {
+                            if(!chapter.LocalContent) {
+                                let urls = chapter.Content.split(',');
+                                CommonCrawler.CrwalerRawImage(urls, chapter.DataId, (_err, _imagesStr) =>{
+                                    if(_err)
+                                    {
+                                        console.log({mes: 'ERROR downloadChapterContent'})
+                                        _resovle({err: 'downloadChapterContent'})
+                                    }
+                                    else {
+                                        if(_imagesStr) {
+                                            // console.log({ images: _imagesStr })
+                                            //Luwu vao chapter
+                                            Chapter.updateLocalContent(chapter, _imagesStr.toString(), (__err, __data) => {
+                                                if(__err)
+                                                {
+                                                    console.log({mes: 'ERROR updateLocalContent'})
+                                                    _resovle({err: 'updateLocalContent'})
+                                                }
+                                                else {
+                                                    console.log({mes: 'Tai xong updateLocalContent'})
+                                                    CrawlerLog.create(new CrawlerLog({
+                                                        Type: 5,
+                                                        EntityOrClassName: 'Chapter',
+                                                        Title: chapter.Code,
+                                                        Note: `Tải ảnh thành công: ${chapter.DataId}`
+                                                    }), (err, data) => {
+                                
+                                                    })
+                                                    _resovle(__data);
+                                                }
+                                            })
+                                        }
+                                    }
+                                })
+                            }else {
+                                _resovle({ mes: "Chapter co anh LOCAL roi" });
+                            }
+                        })
+                    })
+                    Promise.all(promises).then(data => {
+                        console.log({mes: 'Tai xong xong'})
+                        resovleAll(data)
+                    }).catch(err => {
+                        console.log({mes: 'ERRor'})
+                        reject(err)
+                    })
+                }
+            }
+       })
+    })
+}
 module.exports = NetTruyenChapter;

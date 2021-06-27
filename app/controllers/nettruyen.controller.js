@@ -106,3 +106,48 @@ exports.dowloadEbookImage= (req, res) =>{
         else res.send(data);
     })
 };
+
+exports.reCreateEbookCate= (req, res) =>{
+    let cate = req.query.cate;
+    let cate_id = req.query.cate_id;
+    nettruyen.reCreateEbookCate(cate, cate_id, (err, data) => {
+        if (err) {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        }
+        else res.send(data);
+    })
+};
+exports.DownloadChapterImage = (req, res) =>{
+    let ebookSlug = req.query.slug;
+    if(!ebookSlug) {
+        res.status(500).send({
+            message:
+                err.message || "No Params."
+        });
+    }
+    nettruyen.DownloadChapterImage(ebookSlug, (err, data) => {
+        console.log(data)
+        if (err) {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        }
+        else res.send(data);
+    })
+};
+
+exports.DownloadChapterImageFormListEbook = (req, res) => {
+    nettruyen.DownloadChapterImageFormListEbook((err, data) => {
+        if (err) {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        }
+        else res.send(data);
+    })
+}

@@ -78,6 +78,17 @@ Ebook.getAll = result => {
         result(null, res);
     });
 };
+Ebook.getAllRange = result => {
+    sql.query("SELECT * FROM Ebooks Where Id > 2000	 And Id < 20640", (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        console.log(res.length)
+        result(null, res);
+    });
+};
 
 Ebook.updateById = (id, ebook, result) => {
     sql.query(

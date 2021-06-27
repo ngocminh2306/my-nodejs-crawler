@@ -5,7 +5,7 @@ const Category = require("../models/category.model");
 const CrawlerLog = require("../models/crawler.log.model")
 const NetTruyenChapter = require("../nettruyen/nettruyen.chapter");
 const TimTruyenPage = require("../nettruyen/timtruyen.page")
-
+const EbookCategoryRelated = require("../models/ebook.category.related.model");
 const NetTruyenEbook = function () { };
 
 /**
@@ -335,6 +335,39 @@ NetTruyenEbook.CrawlerEbookOnly = (ebook_source_url) => {
             console.log('Tìm được Ebooks!')
             resovleAll(Ebooks);
         }).catch(err => reject(err));
+    })
+}
+
+NetTruyenEbook.reCreateEbookCate = (cate, cate_id, data) =>{
+    return new Promise((resovleAll, reject) => {
+        if(data && data.CategoryString) {
+            let lstCate = [];
+            lstCate =  data.CategoryString.split(' - ');
+            if(lstCate.includes(cate.trim())) {
+                EbookCategoryRelated.findIsExits( data.Id,cate_id , (__err,__data) => {
+                        if(!__data) {
+                            EbookCategoryRelated.create(new EbookCategoryRelated({ EbookCategoryId: cate_id, EbookId: data.Id }), (_err,_data) => {
+                                if(_err)
+                                {
+                                    console.log('Tao That bai')
+                                    reject(_err)
+                                }
+                                else{
+                                    console.log('Tao thanh cong')
+                                    resovleAll(data)
+                                }
+                                    
+                        })
+                        }else {
+                            resovleAll({Update: 'Cate related đã tồn tại'});
+                        }
+                })
+            }else {
+                resovleAll({Update: '1'});
+            }
+            }else {
+            resovleAll({Update: '2'});
+        }
     })
 }
 module.exports = NetTruyenEbook;

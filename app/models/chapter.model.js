@@ -100,6 +100,16 @@ Chapter.getAll = result => {
         result(null, res);
     });
 };
+Chapter.getAllByEbookSlug = (ebookSlug, result) => {
+    sql.query(`SELECT * FROM Chapter WHERE EbookSlug = '${ebookSlug}'`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        result(null, res);
+    });
+};
 
 Chapter.updateById = (id, chapter, result) => {
     sql.query(
@@ -120,6 +130,27 @@ Chapter.updateById = (id, chapter, result) => {
 
             //console.log("updated Chapter: ", { id: id, ...chapter });
             result(null, { id: id, ...Chapter });
+        }
+    );
+};
+Chapter.updateLocalContent = (chapter, content, result) => {
+    console.log("start update LocalContent !")
+    sql.query(
+        "UPDATE Chapter SET LocalContent = ? Where Id = ?",
+        [content, chapter.Id],
+        (err, res) => {
+            if (err) {
+                result(null, err);
+                return;
+            }
+
+            if (res.affectedRows == 0) {
+                // not found Customer with the id
+                result(null, null);
+                return;
+            }
+            console.log("updated Chapter: ", { id: chapter.Id, name: chapter.Name });
+            result(null, { id: chapter.Id, name: chapter.Name });
         }
     );
 };
