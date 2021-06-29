@@ -198,14 +198,14 @@ NetTruyenChapter.DownloadChapterImage = (ebookSlug) =>{
                                                 }
                                                 else {
                                                     console.log({mes: 'Tai xong updateLocalContent'})
-                                                    CrawlerLog.create(new CrawlerLog({
-                                                        Type: 5,
-                                                        EntityOrClassName: 'Chapter',
-                                                        Title: chapter.Code,
-                                                        Note: `Tải ảnh thành công: ${chapter.DataId}`
-                                                    }), (err, data) => {
+                                                    // CrawlerLog.create(new CrawlerLog({
+                                                    //     Type: 5,
+                                                    //     EntityOrClassName: 'Chapter',
+                                                    //     Title: chapter.Code,
+                                                    //     Note: `Tải ảnh thành công: ${chapter.DataId}`
+                                                    // }), (err, data) => {
                                 
-                                                    })
+                                                    // })
                                                     _resovle(__data);
                                                 }
                                             })
@@ -224,6 +224,58 @@ NetTruyenChapter.DownloadChapterImage = (ebookSlug) =>{
                         console.log({mes: 'ERRor'})
                         reject(err)
                     })
+                }
+            }
+       })
+    })
+}
+NetTruyenChapter.DownloadChapterImageByChapter = (dataId) =>{
+    return new Promise((resovleAll, reject) => {
+        Chapter.findByDataId(dataId, (err, chapter) =>{
+            if(err)
+                reject(err)
+            else {
+                
+                console.log('DownloadChapterImageByChapter: 1', dataId)
+                if(chapter) {
+                    if(!chapter.LocalContent) {
+                        console.log('DownloadChapterImageByChapter: 2', dataId)
+                        let urls = chapter.Content.split(',');
+                        CommonCrawler.CrwalerRawImage(urls, chapter.DataId, (_err, _imagesStr) =>{
+                            if(_err)
+                            {
+                                console.log({mes: 'ERROR downloadChapterContent'})
+                                resovleAll({err: 'downloadChapterContent'})
+                            }
+                            else {
+                                if(_imagesStr) {
+                                    // console.log({ images: _imagesStr })
+                                    //Luwu vao chapter
+                                    Chapter.updateLocalContent(chapter, _imagesStr.toString(), (__err, __data) => {
+                                        if(__err)
+                                        {
+                                            console.log({mes: __err})
+                                            resovleAll({err: 'updateLocalContent'})
+                                        }
+                                        else {
+                                            console.log({mes: 'Tai xong updateLocalContent'})
+                                            // CrawlerLog.create(new CrawlerLog({
+                                            //     Type: 5,
+                                            //     EntityOrClassName: 'Chapter',
+                                            //     Title: chapter.Code,
+                                            //     Note: `Tải ảnh thành công: ${chapter.DataId}`
+                                            // }), (err, data) => {
+                        
+                                            // })
+                                            resovleAll(__data);
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    }else {
+                        resovleAll({ mes: "Chapter co anh LOCAL roi" });
+                    }
                 }
             }
        })

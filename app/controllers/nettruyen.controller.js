@@ -151,3 +151,24 @@ exports.DownloadChapterImageFormListEbook = (req, res) => {
         else res.send(data);
     })
 }
+exports.DownloadChapterImageByChapter = (req, res) =>{
+    let dataId = req.query.dataid;
+    console.log(dataId)
+    if(!dataId) {
+        res.status(500).send({
+            message:
+                err.message || "No Params."
+        });
+    }
+    nettruyen.DownloadChapterImageByChapter(dataId, (err, data) => {
+        console.log(data)
+        if (err) {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving customers."
+            });
+        }
+        else res.send(data);
+    })
+};
+

@@ -1,5 +1,6 @@
 const Crawler = require('crawler');
 const fs = require('fs');
+const header_hardcode = require('./header-hardcode');
 const CommonCrawler = function() {
 
 };
@@ -30,36 +31,41 @@ CommonCrawler.LoadPage = (url)=>{
 }
 
 CommonCrawler.CrwalerRawImage = (uris, filename, callback) => {
-    let promises = [];617757
-    let i =0;
-    promises = uris.map(uri => {
+    let promises = [];
+    promises = uris.map((uri, index) => {
         return new Promise((resolve, reject) =>{
+            let timeNow = new Date();
+            let dir = `public/data/${timeNow.getMonth() + 1}/${timeNow.getDate()}/${timeNow.getHours()}/${timeNow.getMinutes()}`;
+            let fileName = `public/data/${timeNow.getMonth() + 1}/${timeNow.getDate()}/${timeNow.getHours()}/${timeNow.getMinutes()}/${filename}_${index}.jpg`;
             const c2 = new Crawler({
+                headers: header_hardcode.header1,
                 encoding: null,
-                maxConnections: 1,
+                maxConnections: 10,
+                retries: 10,
                 jQuery: false,// set false to suppress warning message.
-                callback: 
-                (error, res, done) => {
+                callback: (error, res, done) => {
                     if (error) {
+                        console.log('error: ', error)
                         reject(error);
                     } else {
-                        let timeNow = new Date();
-                        let dir = `public/data/${timeNow.getMonth() + 1}/${timeNow.getDate()}/${timeNow.getHours()}/${timeNow.getMinutes()}`
-                        if (!fs.existsSync(dir)){
-                            fs.mkdirSync(dir, { recursive: true });
+                        try{
+                            if (!fs.existsSync(dir)){
+                                fs.mkdirSync(dir, { recursive: true });
+                            }
+                            if (!fs.existsSync(res.options.filename)){
+                                fs.createWriteStream(res.options.filename, { emitClose: true }).write(res.body);
+                                resolve(res.options.filename);
+                            }
+                        }catch(e){
+                            console.log({ e: e})
+                            reject(e);
                         }
-                        fs.createWriteStream(`${dir}/${filename}_${i}.jpg`, {
-                            emitClose: true
-                          }).write(res.body);
-
-                        resolve(`${dir}/${filename}_${i}.jpg`);
-                        i++;
                     }
                     done();
                 }
             });
             // Queue just one URL, with default callback
-            c2.queue(uri);
+            c2.queue({uri: uri, filename: fileName});
         })
     })
     Promise.all(promises).then(data => {

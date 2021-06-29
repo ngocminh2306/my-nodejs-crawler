@@ -169,4 +169,14 @@ nettruyen.DownloadChapterImageFormListEbook = (result) => {
         }
     })
 }
+nettruyen.DownloadChapterImageByChapter = (dataId, result) => {
+    NetTruyenChapter.DownloadChapterImageByChapter(dataId).then(data => {
+        console.log({mes: 'Service DownloadChapterImage'})
+        result(null, data);
+    }).catch(err => {
+        console.log({mes: 'ERR Service DownloadChapterImage'})
+        result(err, null)
+    })
+}
+
 module.exports = nettruyen;

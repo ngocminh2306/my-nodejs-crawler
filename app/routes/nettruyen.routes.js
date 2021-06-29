@@ -23,4 +23,6 @@ module.exports = app => {
     app.get("/download_chapter_images", nettruyen.DownloadChapterImage)
 
     app.get("/download_chapter_images_from_list_ebook", nettruyen.DownloadChapterImageFormListEbook)
+
+    app.get("/download_chapter_images_by_chapter", nettruyen.DownloadChapterImageByChapter)
 };
