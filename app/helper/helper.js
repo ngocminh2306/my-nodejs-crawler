@@ -1,4 +1,5 @@
-const fs = require('fs');
+// const fs = require('fs');
+const fs = require('graceful-fs');
 const fetch = require('node-fetch');
 const { extension } = require('mime-types');
 const { basename, extname, join } = require('path');

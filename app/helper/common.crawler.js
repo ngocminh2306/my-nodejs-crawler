@@ -19,7 +19,7 @@ CommonCrawler.LoadPage = (url)=>{
                     reject(error);
                 } else {
                     const $ = res.$;
-                    console.log(`Tải trang thành công: ${url}`)
+                    console.log(`Tải trang thành công: ${url}: LENGTH ${res.body.length}`)
                     resolve($);
                 }
                 done();

@@ -16,7 +16,7 @@ exports.crawlerCategory = (req, res) => {
 };
 
 exports.crawlerEbookBySource = (req, res) => {
-    nettruyen.crawler_ebook_by_source('http://www.nettruyentop.com/truyen-tranh/cau-lac-bo-nhung-ke-mat-ngu-30721', (err, data) => {
+    nettruyen.crawler_ebook_by_source('http://www.nettruyenvip.com//truyen-tranh/cau-lac-bo-nhung-ke-mat-ngu-30721', (err, data) => {
         if (err)
             res.status(500).send({
                 message:
@@ -27,7 +27,7 @@ exports.crawlerEbookBySource = (req, res) => {
 };
 
 exports.crawler_ebook_list = (req, res) => {
-    nettruyen.crawler_ebook_list('http://www.nettruyentop.com/tim-truyen/gender-bender', (err, data) => {
+    nettruyen.crawler_ebook_list('http://www.nettruyenvip.com//tim-truyen/gender-bender', (err, data) => {
         if (err)
             res.status(500).send({
                 message:
@@ -36,11 +36,11 @@ exports.crawler_ebook_list = (req, res) => {
         else res.send(data);
     })
 };
-//1. http://www.nettruyentop.com/tim-truyen/cooking (done)
-//2. http://www.nettruyentop.com/tim-truyen/action (fail)
-//3. http://www.nettruyentop.com/tim-truyen/truong-thanh (fail)
-//4. http://www.nettruyentop.com/tim-truyen/live-action (done)
-//5. http://www.nettruyentop.com/tim-truyen/truyen-scan (doing)
+//1. http://www.nettruyenvip.com//tim-truyen/cooking (done)
+//2. http://www.nettruyenvip.com//tim-truyen/action (fail)
+//3. http://www.nettruyenvip.com//tim-truyen/truong-thanh (fail)
+//4. http://www.nettruyenvip.com//tim-truyen/live-action (done)
+//5. http://www.nettruyenvip.com//tim-truyen/truyen-scan (doing)
 //
 exports.CrawlEbookChapterByCategory = (req, res) => {
     let fromIndex = Number(req.query.fromIndex);

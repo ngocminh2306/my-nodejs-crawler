@@ -7,6 +7,7 @@ TimTruyenPage.FindAllMegaMenu = (url) => {
             const $ = res;
             let lstCategory = [];
             $($('.dropdown-menu.megamenu')[0]).find("ul li").each((i, e) => {
+                console.log(i)
                 if(i > 1) {
                     let description = $(e).find('a').attr('data-title')
                     let url = $(e).find('a').attr('href')
@@ -20,8 +21,10 @@ TimTruyenPage.FindAllMegaMenu = (url) => {
                         slug: slug,
                         description: description,
                         source: url,
-                        pageCount: 1
+                        pageCount: 1,
+                        Type: 0
                     })
+                    console.log('category: ', category)
                     lstCategory.push(category);
                 }
                 console.log('Tìm được lstCategory!')
@@ -34,7 +37,8 @@ TimTruyenPage.FindAllMegaMenu = (url) => {
                             slug: category.Slug,
                             description: category.Description,
                             source: category.Source,
-                            pageCount: pageCount
+                            pageCount: pageCount,
+                            Type: 0
                         })
                         resolve1(newCategory)
                     }).then(err => { reject1(err) })
