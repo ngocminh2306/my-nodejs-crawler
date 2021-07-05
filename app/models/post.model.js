@@ -22,7 +22,7 @@ const Post = function (post) {
 }
 
 
-Ebook.getAll = result => {
+Post.getAll = result => {
     sql.query("SELECT * FROM Posts", (err, res) => {
         if (err) {
             result(null, err);
@@ -31,8 +31,19 @@ Ebook.getAll = result => {
         result(null, res);
     });
 };
-
-Ebook.findByKeyWord = (keyword, result) => {
+Post.create = (newEbook, result) => {
+    let ebook = newEbook;
+    delete ebook.chapters;
+    sql.query("INSERT INTO Posts SET ?, CreationTime = now(), IsDeleted = false", ebook, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+        result(null, { id: res.insertId, ...ebook });
+    });
+};
+Post.findByKeyWord = (keyword, result) => {
     sql.query(`SELECT * FROM Posts WHERE Slug = '${keyword}'`, (err, res) => {
         if (err) {
             console.log("error: ", err);
@@ -50,4 +61,4 @@ Ebook.findByKeyWord = (keyword, result) => {
         result(null, null);
     });
 };
-module.exports = Ebook;
+module.exports = Post;

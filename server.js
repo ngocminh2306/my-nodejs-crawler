@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 })
 // require("./app/routes/customer.routes.js")(app);
 require("./app/routes/category.routes.js")(app);
-// require("./app/routes/ebook.routes.js")(app);
+require("./app/routes/kites.routes.js")(app);
 require("./app/routes/nettruyen.routes.js")(app);
 require("./app/routes/dtruyen.routers.js")(app);
 app.listen(port, () => {

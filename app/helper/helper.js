@@ -92,5 +92,12 @@ function generate(count) {
   }
   return str;
 }
+function replaceAll(str) {
+  let mapObj = {cat:"dog",dog:"goat",goat:"cat"};
+  let re = new RegExp(Object.keys(mapObj).join("|"),"gi");
 
+  return str.replace(re, function(matched){
+      return mapObj[matched.toLowerCase()];
+  });
+}
 module.exports = Helper;
