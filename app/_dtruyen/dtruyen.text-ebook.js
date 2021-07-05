@@ -14,41 +14,7 @@ const DtruyenTextEbook = function () { };
  * @returns 
  */
 DtruyenTextEbook.CrawlEbookChapterByCategory = (url) =>{
-    return new Promise((resovle, reject) => {
-        NetTruyenEbook.CrawlerListEbook(url, fromIndex, toIndex).then(listEbookWillCrawl => {
-            let promises = listEbookWillCrawl.map(ebookWillCrawl => {
-                return new Promise((_resovle, _reject) => {
-                    NetTruyenEbook.CrawlerEbook(ebookWillCrawl.Source).then(Ebooks => {
-                        _resovle(Ebooks);
-                    }).catch(err => _reject(err));
-                })
-            })
-            Promise.all(promises).then(ebooks =>{
-                let _promises = ebooks.map(ebook => {
-                    return new Promise((_resovle, _reject) => { 
-                        NetTruyenEbook.SaveEbookAndChapters(ebook).then(data => _resovle(data)).catch(err => _reject(err));
-                    })
-                })
 
-                Promise.all(_promises).then(_data =>{
-                    console.log('NetTruyenEbook.SaveEbookAndChapters done!')
-                    CrawlerLog.create(new CrawlerLog({
-                        Type: 1,
-                        EntityOrClassName: 'Chapter, Ebook',
-                        Title: url,
-                        Note: `From: ${fromIndex} - To: ${toIndex}`
-                    }), (err, data) => {
-
-                    })
-                    resovle(_data);
-                }).catch(err => {
-                    console.log(err)
-                    reject(err)
-                })
-
-            }).catch(err => reject(err))
-        }).catch(err => reject(err));
-    })
 }
 
 module.exports = DtruyenTextEbook;

@@ -56,7 +56,7 @@ Helper.downloadEbookImage = async (uri, slug, callback) => {
     callback(e, null)
   }
 };
-
+                 
 
 Helper.downloadChapterContent = async (uris, filename, callback) => {
   let res = [];
