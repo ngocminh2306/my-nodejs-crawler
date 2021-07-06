@@ -4,6 +4,7 @@ const sql = require("./db.js");
 const EbookCategoryRelated = function (ebookCategoryRelated) {
     this.EbookCategoryId = ebookCategoryRelated.EbookCategoryId;
     this.EbookId = ebookCategoryRelated.EbookId;
+    this.Type = ebookCategoryRelated.Type?ebookCategoryRelated.Type:0;
 };
 
 EbookCategoryRelated.create = (newEbookCategoryRelated, result) => {
@@ -19,7 +20,24 @@ EbookCategoryRelated.create = (newEbookCategoryRelated, result) => {
 
 
 EbookCategoryRelated.findIsExits = (ebookId, cateId, result) => {
-    sql.query(`SELECT * FROM EbookCategoryRelated WHERE EbookCategoryId = ${cateId} AND EbookId = ${ebookId} `, (err, res) => {
+    sql.query(`SELECT * FROM EbookCategoryRelated WHERE EbookCategoryId = ${cateId} AND EbookId = ${ebookId} AND Type = 0`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+
+        if (res.length) {
+            result(null, res[0]);
+            return;
+        }
+
+        // not found Ebook with the id
+        result(null, null);
+    });
+};
+EbookCategoryRelated.findIsTextEbookExits = (ebookId, cateId, result) => {
+    sql.query(`SELECT * FROM EbookCategoryRelated WHERE EbookCategoryId = ${cateId} AND EbookId = ${ebookId} AND Type = 1`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);

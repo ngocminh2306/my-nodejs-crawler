@@ -15,13 +15,14 @@ const TextEbook = function (ebook) {
     this.StatusString = ebook.status_str;
     this.Slug =ebook.slug;
     this.Source = ebook.source;
+    this.PublicationDate = ebook.PublicationDate;
     this.chapters = ebook.chapters? ebookDetail.chapters: [];
 };
 
 TextEbook.create = (newEbook, result) => {
     let ebook = newEbook;
     delete ebook.chapters;
-    sql.query("INSERT INTO TextEbook SET ?, CreationTime = now(), IsDeleted = false, EbookCategoryId = 0, Priority = 0", ebook, (err, res) => {
+    sql.query("INSERT INTO TextEbook SET ?, CreationTime = now(), IsDeleted = false, EbookCategoryId = 0, Priority = 0, EbookType = 0, Status = -1", ebook, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -79,7 +80,7 @@ TextEbook.getAll = result => {
     });
 };
 TextEbook.getAllRange = result => {
-    sql.query("SELECT * FROM TextEbook Where Id > 2000	 And Id < 20640", (err, res) => {
+    sql.query("SELECT * FROM TextEbook Where Id > 0	 And Id < 20000", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
