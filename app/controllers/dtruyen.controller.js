@@ -1,5 +1,7 @@
 const DtruyenPage = require("../_dtruyen/dtruyen.page");
 const DtruyenTextEbook = require("../_dtruyen/dtruyen.text-ebook");
+const DTruyenChapter = require("../_dtruyen/dtruyen.chapter");
+
 const TextEbook = require("../models/text-ebook.model");
 exports.crawlerCategory = (req, res) => {
     DtruyenPage.FindAllMegaMenu('https://dtruyen.com/').then(data => {
@@ -59,3 +61,15 @@ exports.ReCreateEbookCate= (req, res) =>{
         }
     })
 };
+
+exports.CrawlerChapterOnly = (req, res) =>{
+    let url = req.query.url;
+    DTruyenChapter.CrawlerChapterOnly(url).then(data => {
+        res.send(data);
+    }).catch(err => {
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving customers."
+        });
+    })
+} 

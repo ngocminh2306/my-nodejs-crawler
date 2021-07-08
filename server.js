@@ -3,6 +3,7 @@ const schedule = require('node-schedule');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const DtruyenTextEbook = require("./app/_dtruyen/dtruyen.text-ebook");
+const DTruyenChapter = require("./app/_dtruyen/dtruyen.chapter");
 const app = express();
 const port = 3000;
 app.use(cors());
@@ -28,12 +29,13 @@ app.listen(port, () => {
     //     console.log('Job 1');
     //     // DtruyenTextEbook.CrawlEbookByCategory('https://dtruyen.com/tien-hiep/',1,28)
     // });
-    let i = 100;
-    const job2 = schedule.scheduleJob('1 * * * * *', function(fireDate) {
-        console.log('JOB2');
-        DtruyenTextEbook.CrawlEbookByCategory('https://dtruyen.com/ngon-tinh/', i, i);
-        i++;
-    });
+    // let i = 100;
+    // const job2 = schedule.scheduleJob('1 * * * * *', function(fireDate) {
+    //     console.log('JOB2');
+    //     DtruyenTextEbook.CrawlEbookByCategory('https://dtruyen.com/ngon-tinh/', i, i);
+    //     i++;
+    // });
+    
     // const job3 = schedule.scheduleJob('1/5 * * * * *', function(fireDate) {
     //     console.log('JOB3');
     //     DtruyenTextEbook.CrawlEbookByCategory('https://dtruyen.com/do-thi/', 1, 42)
@@ -42,4 +44,14 @@ app.listen(port, () => {
     //     console.log('JOB4');
     //     DtruyenTextEbook.CrawlEbookByCategory('https://dtruyen.com/lich-su/', 1, 6)
     // });
+    let i = 14;
+    const job6 = schedule.scheduleJob('1/10 * * * * *', function(fireDate) {
+        console.log('JOB4');
+        DTruyenChapter.CrawlAndSaveChapter('https://dtruyen.com/van-co-chi-ton/'+ i+'/');
+        if(i ==126) {
+            i = 1;
+        }else{
+            i++;
+        }
+    });
 });
