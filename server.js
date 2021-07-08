@@ -44,14 +44,14 @@ app.listen(port, () => {
     //     console.log('JOB4');
     //     DtruyenTextEbook.CrawlEbookByCategory('https://dtruyen.com/lich-su/', 1, 6)
     // });
-    let i = 14;
-    const job6 = schedule.scheduleJob('1/10 * * * * *', function(fireDate) {
-        console.log('JOB4');
-        DTruyenChapter.CrawlAndSaveChapter('https://dtruyen.com/van-co-chi-ton/'+ i+'/');
-        if(i ==126) {
-            i = 1;
-        }else{
-            i++;
-        }
-    });
+    // let i = 14;
+    // const job6 = schedule.scheduleJob('1/10 * * * * *', function(fireDate) {
+    //     console.log('JOB4');
+    //     DTruyenChapter.CrawlAndSaveChapter('https://dtruyen.com/van-co-chi-ton/'+ i+'/');
+    //     if(i ==126) {
+    //         i = 1;
+    //     }else{
+    //         i++;
+    //     }
+    // });
 });
