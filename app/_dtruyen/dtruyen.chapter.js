@@ -44,6 +44,7 @@ DTruyenChapter.CrawlerChapterOnly = (ebook_source_url) => {
                     if(v.Source) {
                         // console.log('CrawlerChapter !' )
                         DTruyenChapter.CrawlerChapter(v.Source).then(res => {
+                            // console.log(res);
                             resovle1(res)
                         }).catch(err => reject1(err));
                     }else{
@@ -54,7 +55,8 @@ DTruyenChapter.CrawlerChapterOnly = (ebook_source_url) => {
             Promise.all(promises).then(data =>{
                 data.map((v,i) => {
                     let index = lstChapter.findIndex(x=>x.Source == v.source);
-                    lstChapter[index].Content = v.pages.toString();  
+                    // console.log(v)
+                    lstChapter[index].Content = v.pages;  
                     lstChapter[index].UpdateTimeStr = v.update_time_str;            
                 })
                 console.log('Tìm được lstChapter!')
@@ -70,7 +72,9 @@ DTruyenChapter.CrawlerChapter = (chapter_source_url) => {
         // console.log('crawle chapter :' + chapter_source_url)
         CommonCrawler.LoadPage(chapter_source_url).then(res => {
             let $ = res;
-            let datas = $('#chapter-content').text();
+            $('#chapter-content .wt-ads2').remove();
+            $('#chapter-content div').remove();
+            let datas = $('#chapter-content').html();
             let update_time_str = '';
             $('#chapter header p').each((i, e) => {
                 if(i == 2) {

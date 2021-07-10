@@ -12,6 +12,14 @@ CommonCrawler.LoadPage = (url)=>{
         const c2 = new Crawler({
             maxConnections: 1,
             rateLimit: 5000,
+            jQuery: {
+                name: 'cheerio',
+                options: {
+                    normalizeWhitespace: true,
+                    xmlMode: true,
+                    decodeEntities: false
+                }
+            },
             // This will be called for each crawled page
             callback: 
             (error, res, done) => {
