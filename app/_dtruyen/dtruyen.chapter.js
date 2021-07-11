@@ -42,7 +42,6 @@ DTruyenChapter.CrawlerChapterOnly = (ebook_source_url) => {
                 // console.log(v)
                 return new Promise((resovle1, reject1) => {
                     if(v.Source) {
-                        // console.log('CrawlerChapter !' )
                         DTruyenChapter.CrawlerChapter(v.Source).then(res => {
                             // console.log(res);
                             resovle1(res)
@@ -68,21 +67,22 @@ DTruyenChapter.CrawlerChapterOnly = (ebook_source_url) => {
     })
 }
 DTruyenChapter.CrawlerChapter = (chapter_source_url) => {
+
     return new Promise((resovle, reject) => {
         // console.log('crawle chapter :' + chapter_source_url)
-        CommonCrawler.LoadPage(chapter_source_url).then(res => {
-            let $ = res;
-            $('#chapter-content .wt-ads2').remove();
-            $('#chapter-content div').remove();
-            let datas = $('#chapter-content').html();
-            let update_time_str = '';
-            $('#chapter header p').each((i, e) => {
-                if(i == 2) {
-                    update_time_str = $(e).text().trim();
-                }
-            })
-            resovle({pages: datas, source: chapter_source_url, update_time_str: update_time_str})
-        }).then(err => reject(err));
+            CommonCrawler.LoadPage(chapter_source_url).then(res => {
+                let $ = res;
+                $('#chapter-content .wt-ads2').remove();
+                $('#chapter-content div').remove();
+                let datas = $('#chapter-content').html();
+                let update_time_str = '';
+                $('#chapter header p').each((i, e) => {
+                    if(i == 2) {
+                        update_time_str = $(e).text().trim();
+                    }
+                })
+                resovle({pages: datas, source: chapter_source_url, update_time_str: update_time_str})
+            }).then(err => reject(err));
     })
 }
 DTruyenChapter.SaveOrEditChapter = (chapter) => {

@@ -7,7 +7,7 @@ const CommonCrawler = function() {
 /**
  * Load 1 trang và trả vè html $ trang đó
  */
-CommonCrawler.LoadPage = (url)=>{
+CommonCrawler.LoadPage = (url)=> {
     return new Promise((resolve, reject) =>{
         const c2 = new Crawler({
             maxConnections: 1,
@@ -35,6 +35,40 @@ CommonCrawler.LoadPage = (url)=>{
         });
         // Queue just one URL, with default callback
         c2.queue(url);
+    })
+}
+
+CommonCrawler.LoadPages = (urls)=>{
+    return new Promise((resolve, reject) =>{
+        const c2 = new Crawler({
+            maxConnections: 1,
+            rateLimit: 5000,
+            jQuery: {
+                name: 'cheerio',
+                options: {
+                    normalizeWhitespace: true,
+                    xmlMode: true,
+                    decodeEntities: false
+                }
+            },
+            // This will be called for each crawled page
+            callback: 
+            (error, res, done) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    const $ = res.$;
+                    console.log(`Tải trang thành công: ${url}: LENGTH ${res.body.length}`)
+                    resolve($);
+                }
+                done();
+            }
+        });
+        // Queue just one URL, with default callback
+        urls.map((v,i) => {
+
+            c2.queue({url:url, urlIndex: i});
+        })
     })
 }
 
@@ -83,5 +117,11 @@ CommonCrawler.CrwalerRawImage = (uris, filename, callback) => {
         callback(null, null)
     })
 }
+
+function delay(t, v) {
+    return new Promise(function(resolve) { 
+        setTimeout(resolve.bind(null, v), t)
+    });
+ }
 
 module.exports = CommonCrawler;
