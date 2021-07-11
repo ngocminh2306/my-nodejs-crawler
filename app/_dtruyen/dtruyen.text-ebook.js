@@ -8,6 +8,7 @@ const TimTruyenPage = require("../nettruyen/timtruyen.page")
 const EbookCategoryRelated = require("../models/ebook.category.related.model");
 const DTruyenPage = require('./dtruyen.page');
 const DtruyenTextEbook = function () { };
+const Helper = require("../helper/helper");
 
 /**
  * Trả về kết quả tất cả ebook và chapter của category đó
@@ -313,7 +314,7 @@ DtruyenTextEbook.CrawlerEbookOnly = (ebook_source_url) => {
             let $ = res;
             let title = $('#story-detail .col2 h1.title').text();
             let imageUrl = $('#story-detail .col1 .thumb img').attr('src');
-            let content = $('#story-detail .col2 .description').text();
+            let content = $('#story-detail .col2 .description').html();
             let author = $('#story-detail .col1 .infos p.author a').attr('title');
             let cates = [];
             $('#story-detail .col1 .infos p.story_categories span a').each((i, e) => {
@@ -401,6 +402,51 @@ DtruyenTextEbook.ReCreateEbookCate = (cate, cate_id, data) =>{
             }else {
             resovleAll({Update: '2'});
         }
+    })
+}
+DtruyenTextEbook.DowloadEbookImage = (ebook_source_url,slug) =>{
+    return new Promise((resovleAll, reject) => {
+        TextEbook.findByKeyWord(slug, (err, data) => {
+            if(err)
+                reject(err);
+            else
+            {
+                if(data) {
+                    Helper.downloadEbookImage(`${ebook_source_url}`, slug, (_err, _data) => {
+                        if(_err)
+                            reject(_err);
+                        else
+                        {
+                            TextEbook.updateImage(data.Id, _data,  (__err, __data) => {
+                                if(err)
+                                    reject(__err);
+                                else
+                                    resovleAll(__data);
+                            })
+                        }
+                    })
+                }else {
+                    resovleAll({Update: 'Khong download anh vi da co!'});
+                }
+            }
+        })
+    })
+}
+DtruyenTextEbook.DowloadALLEbookImage = () =>{
+    return new Promise((resovleAll, reject) => {
+        TextEbook.getAll((err, ebooks) => {
+            if(ebooks) {
+                ebooks.map(ebook => {
+                    DtruyenTextEbook.DowloadEbookImage(ebook.ImageUrl, ebook.Slug).then(data => {
+                        console.log(data)
+                        resovleAll(data);
+                        // res.send(data);
+                    }).catch(err => {
+                        resovleAll({err: "Loi"})
+                    })
+                })
+            }
+        })
     })
 }
 module.exports =DtruyenTextEbook;
