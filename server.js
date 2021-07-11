@@ -44,24 +44,25 @@ app.listen(port, () => {
     //     console.log('JOB4');
     //     DtruyenTextEbook.CrawlEbookByCategory('https://dtruyen.com/lich-su/', 1, 6)
     // });
-    let i = 1;
-    const job6 = schedule.scheduleJob('1/5 * * * * *', function(fireDate) {
-        console.log('JOB6');
-        DTruyenChapter.CrawlAndSaveChapter('https://dtruyen.com/van-co-chi-ton/'+ i+'/');
-        if(i ==126) {
-            i = 1;
-        }else{
-            i++;
-        }
-    });
-    let j = 1;
-    const job7 = schedule.scheduleJob('1 * * * * *', function(fireDate) {
-        console.log('JOB7');
-        DTruyenChapter.CrawlAndSaveChapter('https://dtruyen.com/than-hoang/'+ i+'/');
-        if(j ==57) {
-            j = 1;
-        }else{
-            j++;
-        }
-    });
+    // let i = 1;
+    // const job6 = schedule.scheduleJob('1 * * * * *', function(fireDate) {
+    //     console.log('JOB6');
+    //     DTruyenChapter.CrawlAndSaveChapter('https://dtruyen.com/van-co-chi-ton/'+ i+'/');
+    //     if(i ==126) {
+    //         i = 1;
+    //     }else{
+    //         i++;
+    //     }
+    // });
+    DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/van-co-chi-ton/'+ 1+'/');
+    // let j = 1;
+    // const job7 = schedule.scheduleJob('1 * * * * *', function(fireDate) {
+    //     console.log('JOB7');
+    //     DTruyenChapter.CrawlAndSaveChapter('https://dtruyen.com/than-hoang/'+ i+'/');
+    //     if(j ==57) {
+    //         j = 1;
+    //     }else{
+    //         j++;
+    //     }
+    // });
 });

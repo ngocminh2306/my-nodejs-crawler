@@ -40,34 +40,56 @@ CommonCrawler.LoadPage = (url)=> {
 
 CommonCrawler.LoadPages = (urls)=>{
     return new Promise((resolve, reject) =>{
-        const c2 = new Crawler({
-            maxConnections: 1,
-            rateLimit: 5000,
-            jQuery: {
-                name: 'cheerio',
-                options: {
-                    normalizeWhitespace: true,
-                    xmlMode: true,
-                    decodeEntities: false
-                }
-            },
-            // This will be called for each crawled page
-            callback: 
-            (error, res, done) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    const $ = res.$;
-                    console.log(`Tải trang thành công: ${url}: LENGTH ${res.body.length}`)
-                    resolve($);
-                }
-                done();
-            }
-        });
-        // Queue just one URL, with default callback
-        urls.map((v,i) => {
-
-            c2.queue({url:url, urlIndex: i});
+        let datass= [];
+        let promises = [];
+        // let promises = urls.map(value => {
+            // return new Promise((_resolve, _reject) =>{
+                const c2 = new Crawler({
+                    maxConnections: 3,
+                    rateLimit: 100,
+                    jQuery: {
+                        name: 'cheerio',
+                        options: {
+                            normalizeWhitespace: true,
+                            xmlMode: true,
+                            decodeEntities: false
+                        }
+                    },
+                    // This will be called for each crawled page
+                    callback: 
+                    (error, res, done) => {
+                        let p = new Promise((_resolve, _reject) =>{
+                            if (error) {
+                                _reject(error);
+                            } else {
+                                const $ = res.$;
+                                console.log(`Tải trang thành công: LENGTH ${res.body.length}`)
+                                _resolve($);
+                            }
+                        })
+                        console.log('push')
+                        datass.push(res.$)
+                        promises.push(p);
+                        console.log('promises length: ' + promises.length)
+                        done();
+                    }
+                });
+                // Queue just one URL, with default callback
+                urls.map((v,i) => {
+                    c2.queue({url:v, urlIndex: i});
+                })
+                c2.on('drain', (res) => {
+                    // For example, release a connection to database.
+                    console.log(datass.length)
+                });
+            // })
+        // })
+        Promise.all(promises).then(data => {
+            console.log('data: '+data);
+            resolve(data);
+        }).catch(err => {
+            console.log('err: '+err);
+            reject(err);
         })
     })
 }

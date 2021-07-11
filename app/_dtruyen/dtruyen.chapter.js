@@ -35,15 +35,12 @@ DTruyenChapter.CrawlerChapterOnly = (ebook_source_url) => {
                     ebook_slug: ebookSlug
                 })
                 
-                // console.log(chapter);
                 lstChapter.push(chapter);
             })
             let promises = lstChapter.map(v => {
-                // console.log(v)
                 return new Promise((resovle1, reject1) => {
                     if(v.Source) {
                         DTruyenChapter.CrawlerChapter(v.Source).then(res => {
-                            // console.log(res);
                             resovle1(res)
                         }).catch(err => reject1(err));
                     }else{
@@ -66,6 +63,68 @@ DTruyenChapter.CrawlerChapterOnly = (ebook_source_url) => {
         })
     })
 }
+//Thu nghiem quee la array
+DTruyenChapter.CrawlerChapterOnly2 = (ebook_source_url) => {
+    return new Promise((resovleAll, reject) => {
+        CommonCrawler.LoadPage(ebook_source_url).then(res => {
+            let $ =res;
+            let slugEbookArray = ebook_source_url.split('/');
+            let ebookSlug =  slugEbookArray[slugEbookArray.length - 3];
+            
+            console.log('Tìm được Ebooks!')
+            let lstChapter = [];
+            $("#chapters .chapters li").each((i, e) => {
+                let source, slugArray, slug, dataId;
+                let name, update_time_str, view, ebook_id;
+
+                source = $(e).find('a').attr('href');
+                slugArray = source.split('/');
+                let a = slugArray[slugArray.length - 1].split('.');
+                let slugStr = a[0].split('_');
+                slug = slugStr[0]
+                dataId = slugStr[1];
+                name = $(e).find('a').text();
+
+                let chapter = new TextChapter({
+                    name: name,
+                    source: source,
+                    slug: slug,
+                    data_id: dataId,
+                    ebook_slug: ebookSlug
+                })
+                
+                lstChapter.push(chapter);
+            })
+            let urls = lstChapter.map(v => v.Source);
+            DTruyenChapter.CrawlerChapter2(urls).then(res => {
+                console.log(res)
+            }).catch(err => reject(err));
+
+            // let promises = lstChapter.map(v => {
+            //     return new Promise((resovle1, reject1) => {
+            //         if(v.Source) {
+            //             DTruyenChapter.CrawlerChapter2(v.Source).then(res => {
+            //                 resovle1(res)
+            //             }).catch(err => reject1(err));
+            //         }else{
+            //             resovle1({err: 'Source NULL'})
+            //         }
+            //     })
+            // })
+            // Promise.all(promises).then(data =>{
+            //     data.map((v,i) => {
+            //         let index = lstChapter.findIndex(x=>x.Source == v.source);
+            //         lstChapter[index].Content = v.pages;  
+            //         lstChapter[index].UpdateTimeStr = v.update_time_str;            
+            //     })
+            //     console.log('Tìm được lstChapter!')
+            //     console.log(lstChapter.length);
+            //     resovleAll(lstChapter)
+            // }).catch(err => reject(err))
+        })
+    })
+}
+
 DTruyenChapter.CrawlerChapter = (chapter_source_url) => {
 
     return new Promise((resovle, reject) => {
@@ -83,6 +142,33 @@ DTruyenChapter.CrawlerChapter = (chapter_source_url) => {
                 })
                 resovle({pages: datas, source: chapter_source_url, update_time_str: update_time_str})
             }).then(err => reject(err));
+    })
+}
+DTruyenChapter.CrawlerChapter2 = (urls) => {
+    return new Promise((resovle, reject) => {
+        CommonCrawler.LoadPages(urls).then(ress => {
+            console.log(ress.length)
+            let promises = ress.map(res => {
+                return new Promise((_resovle, _reject) => {
+                    // console.log('crawle chapter :' + chapter_source_url)
+                    let $ = res;
+                    $('#chapter-content .wt-ads2').remove();
+                    $('#chapter-content div').remove();
+                    let datas = $('#chapter-content').html();
+                    let update_time_str = '';
+                    $('#chapter header p').each((i, e) => {
+                        if(i == 2) {
+                            update_time_str = $(e).text().trim();
+                        }
+                    })
+                    _resovle({pages: datas, source: urls[res.urlIndex], update_time_str: update_time_str})
+                })
+            })
+            Promise.all(promises).then(data => {
+                console.log("QWqweqwe:" + data)
+                resovle(data);
+            }).catch(err => {})
+        }).then(err => reject(err));
     })
 }
 DTruyenChapter.SaveOrEditChapter = (chapter) => {
@@ -147,6 +233,17 @@ DTruyenChapter.CrawlAndSaveChapter = (ebook_source_url) =>{
                 console.log('--------SaveOrEditChapters--------');
                  resovleAll(data)})
             .catch(err => reject(err))
+        }).catch(err => reject(err))
+    })
+}
+DTruyenChapter.CrawlAndSaveChapter2 = (ebook_source_url) =>{
+    return new Promise((resovleAll, reject) => {
+        let promises = [];
+        DTruyenChapter.CrawlerChapterOnly2(ebook_source_url).then(lstChapter =>{
+            // DTruyenChapter.SaveOrEditChapters(lstChapter).then(data => {
+            //     console.log('--------SaveOrEditChapters--------');
+            //      resovleAll(data)})
+            // .catch(err => reject(err))
         }).catch(err => reject(err))
     })
 }
