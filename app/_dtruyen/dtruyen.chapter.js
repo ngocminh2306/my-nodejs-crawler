@@ -96,31 +96,15 @@ DTruyenChapter.CrawlerChapterOnly2 = (ebook_source_url) => {
                 lstChapter.push(chapter);
             })
             let urls = lstChapter.map(v => v.Source);
-            DTruyenChapter.CrawlerChapter2(urls).then(res => {
-                console.log(res)
+            DTruyenChapter.CrawlerChapter2(urls).then(datas => {
+                datas.map((v,i) => {
+                    let index = lstChapter.findIndex(x=>x.Source == v.source);
+                    lstChapter[index].Content = v.pages;  
+                    lstChapter[index].UpdateTimeStr = v.update_time_str;            
+                })
+                console.log('Tìm được lstChapter!')
+                resovleAll(lstChapter)
             }).catch(err => reject(err));
-
-            // let promises = lstChapter.map(v => {
-            //     return new Promise((resovle1, reject1) => {
-            //         if(v.Source) {
-            //             DTruyenChapter.CrawlerChapter2(v.Source).then(res => {
-            //                 resovle1(res)
-            //             }).catch(err => reject1(err));
-            //         }else{
-            //             resovle1({err: 'Source NULL'})
-            //         }
-            //     })
-            // })
-            // Promise.all(promises).then(data =>{
-            //     data.map((v,i) => {
-            //         let index = lstChapter.findIndex(x=>x.Source == v.source);
-            //         lstChapter[index].Content = v.pages;  
-            //         lstChapter[index].UpdateTimeStr = v.update_time_str;            
-            //     })
-            //     console.log('Tìm được lstChapter!')
-            //     console.log(lstChapter.length);
-            //     resovleAll(lstChapter)
-            // }).catch(err => reject(err))
         })
     })
 }
@@ -148,26 +132,21 @@ DTruyenChapter.CrawlerChapter2 = (urls) => {
     return new Promise((resovle, reject) => {
         CommonCrawler.LoadPages(urls).then(ress => {
             console.log(ress.length)
-            let promises = ress.map(res => {
-                return new Promise((_resovle, _reject) => {
-                    // console.log('crawle chapter :' + chapter_source_url)
-                    let $ = res;
-                    $('#chapter-content .wt-ads2').remove();
-                    $('#chapter-content div').remove();
-                    let datas = $('#chapter-content').html();
-                    let update_time_str = '';
-                    $('#chapter header p').each((i, e) => {
-                        if(i == 2) {
-                            update_time_str = $(e).text().trim();
-                        }
-                    })
-                    _resovle({pages: datas, source: urls[res.urlIndex], update_time_str: update_time_str})
+            let p = [];
+            ress.map(res => {
+                let $ = res;
+                $('#chapter-content .wt-ads2').remove();
+                $('#chapter-content div').remove();
+                let datas = $('#chapter-content').html();
+                let update_time_str = '';
+                $('#chapter header p').each((i, e) => {
+                    if(i == 2) {
+                        update_time_str = $(e).text().trim();
+                    }
                 })
+                p.push({pages: datas, source: urls[res.urlIndex], update_time_str: update_time_str})
             })
-            Promise.all(promises).then(data => {
-                console.log("QWqweqwe:" + data)
-                resovle(data);
-            }).catch(err => {})
+            resovle(p);
         }).then(err => reject(err));
     })
 }
@@ -181,16 +160,20 @@ DTruyenChapter.SaveOrEditChapter = (chapter) => {
                     TextChapter.updateById(data.Id, chapter, (_err,_data) =>{
                         if(_err)
                             reject(_err)
-                        else 
+                        else {
+                            console.log('update')
                             resovle(_data)
+                        }
                     })
                     resovle(data)
                 }else { //chưa có thì thêm mới
                     TextChapter.create(chapter, (_err,_data) =>{
                         if(_err)
                             reject(_err)
-                        else 
+                        else {
                             resovle(_data)
+                            console.log('update')
+                    }
                     })
                 }
             }
@@ -240,10 +223,10 @@ DTruyenChapter.CrawlAndSaveChapter2 = (ebook_source_url) =>{
     return new Promise((resovleAll, reject) => {
         let promises = [];
         DTruyenChapter.CrawlerChapterOnly2(ebook_source_url).then(lstChapter =>{
-            // DTruyenChapter.SaveOrEditChapters(lstChapter).then(data => {
-            //     console.log('--------SaveOrEditChapters--------');
-            //      resovleAll(data)})
-            // .catch(err => reject(err))
+            DTruyenChapter.SaveOrEditChapters(lstChapter).then(data => {
+                console.log('--------SaveOrEditChapters--------');
+                 resovleAll(data)})
+            .catch(err => reject(err))
         }).catch(err => reject(err))
     })
 }

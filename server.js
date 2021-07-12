@@ -47,22 +47,55 @@ app.listen(port, () => {
     // let i = 1;
     // const job6 = schedule.scheduleJob('1 * * * * *', function(fireDate) {
     //     console.log('JOB6');
-    //     DTruyenChapter.CrawlAndSaveChapter('https://dtruyen.com/van-co-chi-ton/'+ i+'/');
+    //     DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/van-co-chi-ton/'+ i+'/');
     //     if(i ==126) {
     //         i = 1;
     //     }else{
     //         i++;
     //     }
     // });
-    DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/van-co-chi-ton/'+ 1+'/');
     // let j = 1;
-    // const job7 = schedule.scheduleJob('1 * * * * *', function(fireDate) {
+    // schedule.scheduleJob('2 * * * * *', function(fireDate) {
     //     console.log('JOB7');
-    //     DTruyenChapter.CrawlAndSaveChapter('https://dtruyen.com/than-hoang/'+ i+'/');
+    //     DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/than-hoang/'+ j+'/');
     //     if(j ==57) {
     //         j = 1;
     //     }else{
     //         j++;
     //     }
     // });
+
+    // let k = 1;
+    // schedule.scheduleJob('1 * * * * *', function(fireDate) {
+    //     console.log('JOB7');
+    //     DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/kiem-dao-doc-ton/'+ k+'/');
+    //     if(k ==61) {
+    //        k = 1;
+    //     }else{
+    //         k++;
+    //     }
+    // });
+
+    // let l = 1;
+    // schedule.scheduleJob('3 * * * * *', function(fireDate) {
+    //     console.log('JOB7');
+    //     DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/hop-dong-hon-nhan-100-ngay/'+ l+'/');
+    //     if(l ==14) {
+    //         l = 1;
+    //     }else{
+    //         l++;
+    //     }
+    // });
+
+    let n = 1;
+    schedule.scheduleJob('1/5 * * * * *', function(fireDate) {
+        console.log('JOB7');
+        DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/ngao-the-dan-than/'+ n+'/');
+        if(n ==127) {
+            n = 1;
+        }else{
+            n++;
+        }
+    });
+
 });

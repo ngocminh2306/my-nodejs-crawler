@@ -41,7 +41,7 @@ CommonCrawler.LoadPage = (url)=> {
 CommonCrawler.LoadPages = (urls)=>{
     return new Promise((resolve, reject) =>{
         let datass= [];
-        let promises = [];
+        // let promises = [];
         // let promises = urls.map(value => {
             // return new Promise((_resolve, _reject) =>{
                 const c2 = new Crawler({
@@ -58,19 +58,14 @@ CommonCrawler.LoadPages = (urls)=>{
                     // This will be called for each crawled page
                     callback: 
                     (error, res, done) => {
-                        let p = new Promise((_resolve, _reject) =>{
-                            if (error) {
-                                _reject(error);
-                            } else {
-                                const $ = res.$;
-                                console.log(`Tải trang thành công: LENGTH ${res.body.length}`)
-                                _resolve($);
-                            }
-                        })
-                        console.log('push')
-                        datass.push(res.$)
-                        promises.push(p);
-                        console.log('promises length: ' + promises.length)
+                        if (error) {
+                            _reject(error);
+                        } else {
+                            const $ = res.$;
+                            $.urlIndex = res.options.urlIndex;
+                            console.log(`Tải trang thành công: LENGTH ${res.body.length}`)
+                            datass.push(res.$)
+                        }
                         done();
                     }
                 });
@@ -80,17 +75,18 @@ CommonCrawler.LoadPages = (urls)=>{
                 })
                 c2.on('drain', (res) => {
                     // For example, release a connection to database.
-                    console.log(datass.length)
+                    // console.log(datass)
+                    resolve(datass)
                 });
             // })
         // })
-        Promise.all(promises).then(data => {
-            console.log('data: '+data);
-            resolve(data);
-        }).catch(err => {
-            console.log('err: '+err);
-            reject(err);
-        })
+        // Promise.all(promises).then(data => {
+        //     console.log('data: '+data);
+        //     resolve(data);
+        // }).catch(err => {
+        //     console.log('err: '+err);
+        //     reject(err);
+        // })
     })
 }
 
