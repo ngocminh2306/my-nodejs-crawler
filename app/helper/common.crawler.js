@@ -46,7 +46,7 @@ CommonCrawler.LoadPages = (urls)=>{
             // return new Promise((_resolve, _reject) =>{
                 const c2 = new Crawler({
                     maxConnections: 3,
-                    rateLimit: 100,
+                    rateLimit: 1500,
                     jQuery: {
                         name: 'cheerio',
                         options: {

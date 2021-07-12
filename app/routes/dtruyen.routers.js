@@ -5,5 +5,6 @@ module.exports = app => {
     app.get("/crawler-category-dtruyen", Dtruyen.crawlerCategory);
     app.get("/crawler-ebook-dtruyen", Dtruyen.CrawlEbookByCategory);
     app.get("/crawler-ebook-craetecate-dtruyen", Dtruyen.ReCreateEbookCate);
+    app.get("/crawler-chapter-dtruyen", Dtruyen.ReCreateEbookCate);
     
 };
