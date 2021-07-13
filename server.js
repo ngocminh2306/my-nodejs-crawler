@@ -90,31 +90,35 @@ app.listen(port, () => {
     let n = 1,m = 1,j = 1,k = 1,h = 1,x = 1,y = 1,z = 1;
     schedule.scheduleJob('1 * * * * *', function(fireDate) {
         console.log(n)
-        if(n <= 127) {
-            console.log(n)
-            DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/ngao-the-dan-than/'+ n+'/');
-            n++;
-        }else{
-            if(m <= 157) {
-                DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/linh-vu-thien-ha/'+ m+'/');
-                m++
-            }else{
-                if(j <= 83) {
-                    DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/pham-nhan-tu-tien/'+ j+'/');
-                    j++
-                }else{
-                    if(k <= 55) {
-                        DTruyenChapter.CrawlAndSaveChapter2('	https://dtruyen.com/re-quy-troi-cho-wt2/'+ k+'/');
-                        k++
-                    }else{
-                        if(h <= 22) {
-                            DTruyenChapter.CrawlAndSaveChapter2('	https://dtruyen.com/y-thu-che-thien/'+ h+'/');
-                            h++
-                        }
-                    }
-                }
-            }
+        if(h <= 28) {
+            DTruyenChapter.CrawlAndSaveChapter2('	https://dtruyen.com/chao-buoi-sang-tong-thong-dai-nhan/'+ h+'/');
+            h++
         }
+        // if(n <= 69) {
+        //     console.log(n)
+        //     DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/linh-chu/'+ n+'/');
+        //     n++;
+        // }else{
+        //     if(m <= 33) {
+        //         DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/tao-than/'+ m+'/');
+        //         m++
+        //     }else{
+        //         if(j <= 11) {
+        //             DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/vo-yeu-xinh-dep-cua-tong-giam-doc-tan-ac-wt1/'+ j+'/');
+        //             j++
+        //         }else{
+        //             if(k <= 120) {
+        //                 DTruyenChapter.CrawlAndSaveChapter2('	https://dtruyen.com/hang-ty-cung-chieu-vo-nam-than-hon-sau-101-wt1/'+ k+'/');
+        //                 k++
+        //             }else{
+        //                 if(h <= 28) {
+        //                     DTruyenChapter.CrawlAndSaveChapter2('	https://dtruyen.com/chao-buoi-sang-tong-thong-dai-nhan/'+ h+'/');
+        //                     h++
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     });
 
 });
