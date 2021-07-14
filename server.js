@@ -89,11 +89,6 @@ app.listen(port, () => {
 
     let n = 1,m = 1,j = 1,k = 1,h = 1,x = 1,y = 1,z = 1;
     schedule.scheduleJob('1 * * * * *', function(fireDate) {
-        console.log(n)
-        if(h <= 28) {
-            DTruyenChapter.CrawlAndSaveChapter2('	https://dtruyen.com/chao-buoi-sang-tong-thong-dai-nhan/'+ h+'/');
-            h++
-        }
         // if(n <= 69) {
         //     console.log(n)
         //     DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/linh-chu/'+ n+'/');
@@ -119,6 +114,65 @@ app.listen(port, () => {
         //         }
         //     }
         // }
+
+        if(n <= 12) {
+            console.log(n)
+            DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/nguoi-chong-mau-lanh-wt1/'+ n+'/');
+            n++;
+        }else{
+            if(m <= 24) {
+                DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/tong-tai-dai-nhan-the-luc-tot-wt1/'+ m+'/');
+                m++
+            }else{
+                if(j <= 21) {
+                    DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/duong-chon-thanh-hau-ta-mi-lanh-de-on-nhu-yeu/'+ j+'/');
+                    j++
+                }else{
+                    if(k <= 9) {
+                        DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/hop-dong-tinh-nhan/'+ k+'/');
+                        k++
+                    }else{
+                        if(h <= 42) {
+                            DTruyenChapter.CrawlAndSaveChapter2('https://dtruyen.com/vo-thuong-wt1/'+ h+'/');
+                            h++
+                        }
+                    }
+                }
+            }
+        }
     });
 
 });
+
+// https://dtruyen.com/than-y-quy-nu-cung-chieu-that-hoang-phi/
+// https://dtruyen.com/vu-nghich-can-khon/
+// https://dtruyen.com/the-gioi-hoan-my/
+// https://dtruyen.com/tien-ha-phong-bao/
+// https://dtruyen.com/chan-linh-cuu-bien/
+// https://dtruyen.com/nguoi-chong-mau-lanh-wt1/
+// https://dtruyen.com/tong-tai-dai-nhan-the-luc-tot-wt1/
+// https://dtruyen.com/duong-chon-thanh-hau-ta-mi-lanh-de-on-nhu-yeu/
+// https://dtruyen.com/hop-dong-tinh-nhan/
+// https://dtruyen.com/vo-thuong-wt1/
+// https://dtruyen.com/thien-ha/
+// https://dtruyen.com/thuc-hoan-gia-yeu/
+// https://dtruyen.com/thien-ton-trung-sinh/
+// https://dtruyen.com/tu-dai-tai-phiet-dang-ky-ket-hon-tre/
+// https://dtruyen.com/quy-y-quan-vuong-phi/
+// https://dtruyen.com/dai-than-om-vao-long-101-nu-hon-sau/
+// https://dtruyen.com/sac-dep-kho-cuong/
+// https://dtruyen.com/hoa-son-tien-mon/
+// https://dtruyen.com/xuyen-nhanh-nam-than-bung-chay-di/
+// https://dtruyen.com/dung-lam-osin-nua-lam-nguoi-yeu-anh-di/
+// https://dtruyen.com/than-hoang/
+// https://dtruyen.com/cong-tu-dien-khung/
+// https://dtruyen.com/dac-cong-ta-phi/
+// https://dtruyen.com/sieu-cap-cuong-gia/
+// https://dtruyen.com/chin-tuoi-tieu-yeu-hau/
+// https://dtruyen.com/trung-sinh-sieu-sao-vo-yeu-cua-am-da-de-vuong/
+// https://dtruyen.com/tieu-thiep-khong-de-lam/
+// https://dtruyen.com/neu-oc-sen-co-tinh-yeu/
+// https://dtruyen.com/ket-hon-chop-nhoang-tong-tai-ly-hon-di-wt1/
+// https://dtruyen.com/hoang-kim-dong-wt1/
+// https://dtruyen.com/thanh-mai-muon-treo-tuong/
+// https://dtruyen.com/tieu-yeu-tinh-hoa-thuy-xem-tram-thu-phuc-nang/
